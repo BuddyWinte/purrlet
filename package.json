@@ -1,0 +1,20 @@
+{
+  "name": "nekobox",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node src/index.js",
+    "build": "echo \"add bundler later\"",
+    "lint": "eslint ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "eslint": "^10.0.0",
+    "prettier": "^3.8.1",
+    "rollup": "^4.57.1"
+  }
+}
