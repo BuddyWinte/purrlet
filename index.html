@@ -1,0 +1,15 @@
+<input type="file" id="file">
+<script src="dist/purrlet.min.js"></script>
+<script>
+  const nb = new Purrlet({
+    provider: "imgbb",
+    apiKey: "aca92f2ab6583c4cf6cbae77e7cdc8fa",
+    onUpload: url => console.log("Uploaded:", url)
+  });
+
+  document.getElementById("file").addEventListener("change", async e => {
+    const file = e.target.files[0];
+    const uploadedUrl = await nb.upload(file);
+    console.log("URL:", uploadedUrl);
+  });
+</script>
