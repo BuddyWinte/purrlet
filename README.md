@@ -1,6 +1,5 @@
 # Purrlet
-
-Purrlet is a lightweight image upload library for modern JavaScript apps.
+A lightweight, customizable, feature-rich drawbox and upload library built for React, Vue, Astro, SvelteKit, and modern JavaScript apps.
 
 ## Version scope (v0.9)
 
