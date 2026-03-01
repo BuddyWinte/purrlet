@@ -49,4 +49,14 @@ module.exports = [
     },
     plugins: [resolve()],
   },
+  {
+    input: 'src/integrations/sveltekit.js',
+    output: {
+      file: 'dist/sveltekit.mjs',
+      format: 'es',
+      sourcemap: true,
+    },
+    external: ['svelte/store'],
+    plugins: [resolve()],
+  },
 ];

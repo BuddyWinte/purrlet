@@ -18,7 +18,9 @@ export function createAstroUploader(config) {
 
   return {
     client,
-    upload: (file) => client.upload(file),
+    upload: (file, options) => client.upload(file, options),
+    uploadMany: (files, options) => client.uploadMany(files, options),
+    destroy: () => client.destroy(),
   };
 }
 

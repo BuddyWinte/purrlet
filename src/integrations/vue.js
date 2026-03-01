@@ -1,4 +1,4 @@
-import { ref, shallowRef } from "vue";
+import { onBeforeUnmount, ref, shallowRef } from "vue";
 import Purrlet from "../purrlet.js";
 
 /**
@@ -10,12 +10,12 @@ export function usePurrlet(config) {
   const isUploading = ref(false);
   const error = ref(null);
 
-  const upload = async (file) => {
+  const upload = async (file, options) => {
     isUploading.value = true;
     error.value = null;
 
     try {
-      return await client.value.upload(file);
+      return await client.value.upload(file, options);
     } catch (err) {
       error.value = err;
       throw err;
@@ -24,7 +24,25 @@ export function usePurrlet(config) {
     }
   };
 
-  return { client, upload, isUploading, error };
+  const uploadMany = async (files, options) => {
+    isUploading.value = true;
+    error.value = null;
+
+    try {
+      return await client.value.uploadMany(files, options);
+    } catch (err) {
+      error.value = err;
+      throw err;
+    } finally {
+      isUploading.value = false;
+    }
+  };
+
+  onBeforeUnmount(() => {
+    client.value.destroy();
+  });
+
+  return { client, upload, uploadMany, isUploading, error };
 }
 
 export default usePurrlet;
