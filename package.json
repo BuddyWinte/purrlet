@@ -1,6 +1,6 @@
 {
   "name": "purrlet",
-  "version": "1.0.0",
+  "version": "0.0.9",
   "description": "A lightweight headless canvas drawing engine and image upload toolkit for indie sites and creative JavaScript apps.",
   "type": "module",
   "main": "./dist/purrlet.mjs",
