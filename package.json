@@ -1,7 +1,7 @@
 {
   "name": "purrlet",
-  "version": "0.0.9",
-  "description": "A lightweight headless canvas drawing engine and image upload toolkit for indie sites and creative JavaScript apps.",
+  "version": "1.0.0",
+  "description": "A lightweight headless drawbox-style canvas engine for indie sites and creative side projects. simple, fast, flexible.",
   "type": "module",
   "main": "./dist/purrlet.mjs",
   "module": "./dist/purrlet.mjs",
@@ -66,8 +66,13 @@
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-terser": "^1.0.0",
+    "@rollup/plugin-typescript": "^12.3.0",
     "eslint": "^9.0.0",
     "prettier": "^3.8.1",
-    "rollup": "^4.57.1"
+    "rollup": "^4.57.1",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "tslib": "^2.8.1"
   }
 }

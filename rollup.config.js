@@ -1,62 +1,45 @@
-const resolve = require('@rollup/plugin-node-resolve').default;
-const terser = require('@rollup/plugin-terser');
+import resolve from "@rollup/plugin-node-resolve";
+import terser from "@rollup/plugin-terser";
+import typescript from "@rollup/plugin-typescript";
 
-module.exports = [
+const banner = `/*!
+ * Purrlet v1.0.0
+ *
+ * A lightweight headless drawbox-style canvas engine for indie sites and creative side projects. simple, fast, flexible.
+ * meow
+ *
+ * Created by BuddyWinte and contributors
+ * https://github.com/BuddyWinte/Purrlet
+ *
+ * SPDX-License-Identifier: MIT
+ */`;
+
+export default [
   {
-    input: 'src/purrlet.js',
+    input: "src/index.ts",
     output: [
       {
-        file: 'dist/purrlet.min.js',
-        format: 'umd',
-        name: 'Purrlet',
+        file: "dist/purrlet.min.js",
+        format: "umd",
+        name: "Purrlet",
         sourcemap: true,
-        plugins: [terser({ format: { comments: /^!/ } })],
+        banner,
       },
       {
-        file: 'dist/purrlet.mjs',
-        format: 'es',
+        file: "dist/purrlet.mjs",
+        format: "es",
         sourcemap: true,
+        banner,
       },
     ],
-    plugins: [resolve()],
-  },
-  {
-    input: 'src/integrations/react.js',
-    output: {
-      file: 'dist/react.mjs',
-      format: 'es',
-      sourcemap: true,
-    },
-    external: ['react'],
-    plugins: [resolve()],
-  },
-  {
-    input: 'src/integrations/vue.js',
-    output: {
-      file: 'dist/vue.mjs',
-      format: 'es',
-      sourcemap: true,
-    },
-    external: ['vue'],
-    plugins: [resolve()],
-  },
-  {
-    input: 'src/integrations/astro.js',
-    output: {
-      file: 'dist/astro.mjs',
-      format: 'es',
-      sourcemap: true,
-    },
-    plugins: [resolve()],
-  },
-  {
-    input: 'src/integrations/sveltekit.js',
-    output: {
-      file: 'dist/sveltekit.mjs',
-      format: 'es',
-      sourcemap: true,
-    },
-    external: ['svelte/store'],
-    plugins: [resolve()],
+    plugins: [
+      resolve(),
+      typescript({ tsconfig: "./tsconfig.json" }),
+      terser({
+        format: {
+          comments: /^!/,
+        },
+      }),
+    ],
   },
 ];
