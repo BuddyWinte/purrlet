@@ -4,7 +4,7 @@ a lightweight, headless drawbox-style canvas engine for indie sites and creative
 
 simple. fast. flexible.
 
-> > [!IMPORTANT]  
+> [!IMPORTANT]  
 > purrlet is in VERY early beta. expect bugs. expect things to break.
 
 ---
