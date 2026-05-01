@@ -214,7 +214,6 @@ then you only need to implement the tool logic.
 the generated file looks like this:
 
 ```javascript
-<<<<<<< HEAD
 import { defineTool } from "./defineTool";
 import type { ToolInstance } from "./types";
 
