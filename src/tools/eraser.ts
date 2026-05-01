@@ -1,17 +1,17 @@
-import type { Tool, ToolInstance } from "./types";
+import { defineTool } from "./defineTool";
+import type { ToolInstance } from "./types";
 
-type EraserConfig = {
+type EraserToolConfig = {
   size?: number;
 };
 
-export const eraserTool: Tool = {
+export const eraserTool = defineTool({
   name: "eraser",
 
-  create(config: EraserConfig = {}): ToolInstance {
+  create(config: EraserToolConfig = {}): ToolInstance {
     return {
       onDown(p, { ctx }) {
         ctx.save();
-
         ctx.globalCompositeOperation = "destination-out";
         ctx.lineWidth = config.size ?? 20;
         ctx.lineCap = "round";
@@ -28,9 +28,9 @@ export const eraserTool: Tool = {
         ctx.stroke();
       },
 
-      onUp(_: any, { ctx }) {
+      onUp(_, { ctx }) {
         ctx.restore();
       },
     };
   },
-};
+});

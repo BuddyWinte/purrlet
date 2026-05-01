@@ -1,6 +1,10 @@
+import type { Tool } from "../tools";
+
 export type UploadContext = {
   canvas: HTMLCanvasElement;
 };
+
+export type SaveStrategy = "commands" | "blob" | "data-url";
 
 export type PurrletConfig = {
   canvas: HTMLCanvasElement;
@@ -9,9 +13,12 @@ export type PurrletConfig = {
   color?: string;
   size?: number;
   opacity?: number;
+  tools?: Tool[];
   save?: {
     enabled?: boolean;
     key?: string;
+    strategy?: SaveStrategy;
+    maxCommands?: number;
   },
   upload?: {
     provider?: "imgbb" | "imgur";

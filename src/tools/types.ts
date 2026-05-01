@@ -14,7 +14,10 @@ export interface ToolInstance {
   onUp(p: Pointer, ctx: ToolContext): void;
 }
 
-export interface Tool {
+export interface Tool<TConfig = any> {
   name: string;
-  create(config: any): ToolInstance;
+  modifiesCanvas?: boolean;
+  create(config: TConfig): ToolInstance;
 }
+
+export type ToolMap = Record<string, Tool>;

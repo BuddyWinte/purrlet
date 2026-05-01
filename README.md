@@ -57,7 +57,14 @@ switch tools whenever:
 p.setTool("brush", { color: "#000", size: 5 });
 p.setTool("line", { color: "blue", size: 3 });
 p.setTool("eraser", { size: 20 });
+p.setTool("fill", { color: "gold", tolerance: 8 });
+p.setTool("eyedropper", {
+  onPickColor: (color) => console.log(color)
+});
 ```
+
+> the following tools exist:
+> **brush**, **line**, **eraser**, **fill**, **eyedropper**
 
 undo / redo:
 
@@ -66,18 +73,37 @@ p.undo();
 p.redo();
 ```
 
-saving (localstorage):
+saving:
 
 ```javascript
 const p = new Purrlet({
   canvas,
   save: {
     enabled: true,
-    key: "my-drawing"
+    key: "my-drawing",
+    strategy: "commands"
   }
 });
 
-p.save();
+await p.save();
+```
+
+save strategies:
+
+```javascript
+save: {
+  enabled: true,
+  key: "my-drawing",
+  strategy: "commands" // default
+}
+```
+
+- `commands`: stores replayable tool interactions in `localStorage`. best when the drawing is made through purrlet tools.
+- `blob`: stores a PNG `Blob` in `IndexedDB`. use this when you also draw directly with `ctx`, seed scenes manually, or need a full raster snapshot.
+- `data-url`: legacy mode. stores base64 PNG data in `localStorage`.
+
+```javascript
+await p.clearSave();
 ```
 
 ---
@@ -142,6 +168,8 @@ type PurrletConfig = {
   save?: {
     enabled?: boolean;
     key?: string;
+    strategy?: "commands" | "blob" | "data-url";
+    maxCommands?: number;
   };
 
   upload?: {
@@ -162,27 +190,64 @@ type PurrletConfig = {
 
 ## contributing
 
-### adding tools
+### adding built-in tools
 
-tools are modular. small. easy.
+if you are contributing through the github repo, you should not have to hand-wire a bunch of files just to open a tool PR.
 
-each tool exports:
+start with:
+
+```bash
+npm run tool:new -- rectangle
+```
+
+that command will:
+
+1. create `src/tools/rectangle.ts`
+2. add a typed config block
+3. set the exported tool name
+4. register the tool in `src/tools/index.ts`
+
+then you only need to implement the tool logic.
+
+the generated file looks like this:
 
 ```javascript
-export const myTool = {
-  name: "myTool",
-  create(config) {
-    return {
-      onDown(p, ctx) {},
-      onMove(p, ctx) {},
-      onUp(p, ctx) {}
-    };
-  }
+import { defineTool } from "./defineTool";
+import type { ToolInstance } from "./types";
+
+type RectangleToolConfig = {
+  color?: string;
+  size?: number;
 };
+
+export const rectangleTool = defineTool({
+  name: "rectangle",
+
+  create(config: RectangleToolConfig = {}): ToolInstance {
+    return {
+      onDown(p, { ctx }) {
+        ctx.strokeStyle = config.color ?? "#000";
+        ctx.lineWidth = config.size ?? 4;
+
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+      },
+
+      onMove(p, { ctx }) {
+        if (!p.isDown) return;
+
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+      },
+
+      onUp() {},
+    };
+  },
+});
 ```
 
-register it:
+after that:
 
-```javascript
-tools["myTool"] = myTool;
-```
+1. replace the starter logic with the actual tool behavior
+2. run `npm run build`
+3. add docs or tests if the tool needs them

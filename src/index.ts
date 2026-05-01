@@ -1,5 +1,5 @@
 /*!
- * Purrlet v1.0.0
+ * Purrlet v1.0.1
  *
  * A lightweight headless drawbox-style canvas engine for indie sites and creative side projects. simple, fast, flexible.
  * meow
@@ -11,3 +11,19 @@
  */
 
 export { Purrlet } from "./core/Purrlet";
+export {
+  brushTool,
+  createToolRegistry,
+  defineTool,
+  eraserTool,
+  eyedropperTool,
+  fillTool,
+  lineTool,
+} from "./tools";
+export type {
+  Pointer,
+  Tool,
+  ToolContext,
+  ToolInstance,
+  ToolMap,
+} from "./tools";

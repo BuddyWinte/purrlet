@@ -1,13 +1,21 @@
-import type { Tool, ToolInstance } from "./types";
+import { defineTool } from "./defineTool";
+import type { ToolInstance } from "./types";
 
-export const brushTool: Tool = {
+type BrushToolConfig = {
+  color?: string;
+  size?: number;
+};
+
+export const brushTool = defineTool({
   name: "brush",
 
-  create(config) {
+  create(config: BrushToolConfig = {}): ToolInstance {
     return {
       onDown(p, { ctx }) {
         ctx.strokeStyle = config.color ?? "#000";
         ctx.lineWidth = config.size ?? 5;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
 
         ctx.beginPath();
         ctx.moveTo(p.x, p.y);
@@ -23,4 +31,4 @@ export const brushTool: Tool = {
       onUp() {},
     };
   },
-};
+});

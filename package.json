@@ -1,6 +1,6 @@
 {
   "name": "purrlet",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A lightweight headless drawbox-style canvas engine for indie sites and creative side projects. simple, fast, flexible.",
   "type": "module",
   "main": "./dist/purrlet.mjs",
@@ -21,6 +21,7 @@
     "node": ">=18"
   },
   "scripts": {
+    "tool:new": "node ./scripts/create-tool.mjs",
     "clean": "rm -rf dist",
     "dev": "rollup -c --watch",
     "build": "rollup -c",
