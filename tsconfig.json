@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
+
     "target": "ES2020",
     "module": "ESNext",
     "moduleResolution": "bundler",
     "declaration": true,
-    "emitDeclarationOnly": true,
-    "outDir": "./dist/types",
+    "rootDir": "./src",
+    "outDir": "./dist",
     "strict": true,
     "skipLibCheck": true,
     "esModuleInterop": true
