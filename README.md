@@ -6,8 +6,17 @@ simple. fast. flexible.
 
 > [!IMPORTANT]  
 > purrlet is in VERY early beta. expect bugs. expect things to break.
+<p align="center">
 
----
+![GitHub Release](https://img.shields.io/github/v/release/buddywinte/purrlet)
+[![Discord](https://img.shields.io/discord/1375986160995930132?style=plastic&logo=discord&label=Discord)](https://discord.gg/Ruk58PhJvm) <- click to join the discord!
+![NPM Version](https://img.shields.io/npm/v/purrlet)
+![Downloads](https://img.shields.io/npm/dm/purrlet)
+![Total Downloads](https://img.shields.io/npm/dt/purrlet)
+![License](https://img.shields.io/github/license/buddywinte/purrlet)
+![Install](https://img.shields.io/badge/npm-install%20purrlet-blue)
+
+</p>
 
 ## what is purrlet?
 
