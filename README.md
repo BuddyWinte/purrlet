@@ -14,7 +14,6 @@ simple. fast. flexible.
 ![Downloads](https://img.shields.io/npm/dm/purrlet)
 ![Total Downloads](https://img.shields.io/npm/dt/purrlet)
 ![License](https://img.shields.io/github/license/buddywinte/purrlet)
-![Bundle Size](https://img.shields.io/bundlephobia/minzip/purrlet)
 ![Install](https://img.shields.io/badge/npm-install%20purrlet-blue)
 
 </p>
