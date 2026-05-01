@@ -24,7 +24,7 @@ export const fillTool = defineTool({
         const next = parseCssColor(config.color ?? "#000");
         const tolerance = Math.max(0, config.tolerance ?? 0);
 
-        if (colorsMatch(target, next, 0)) return;
+        if (colorsMatch(target, next, tolerance)) return;
 
         const stack: Array<[number, number]> = [[x, y]];
 

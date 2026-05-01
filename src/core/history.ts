@@ -1,28 +1,28 @@
 // This function is incharge of the history keeper, .redo, .undo
 
 export function createHistory(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
-  let undoSnapshot: ImageData | null = null;
-  let redoSnapshot: ImageData | null = null;
+  let undoSnapshots: ImageData[] = [];
+  let redoSnapshots: ImageData[] = [];
 
   function saveState() {
     const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    undoSnapshot = image;
-    redoSnapshot = null;
+    undoSnapshots.push(image);
+    redoSnapshots = [];
   }
   function undo() {
-    if (!undoSnapshot) return;
+    if (undoSnapshots.length === 0) return;
     const current = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    redoSnapshot = current;
-    ctx.putImageData(undoSnapshot, 0, 0);
-    undoSnapshot = null;
+    redoSnapshots.push(current);
+    const prev = undoSnapshots.pop()!;
+    ctx.putImageData(prev, 0, 0);
   }
 
   function redo() {
-    if (!redoSnapshot) return;
+    if (redoSnapshots.length === 0) return;
     const current = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    undoSnapshot = current;
-    ctx.putImageData(redoSnapshot, 0, 0);
-    redoSnapshot = null;
+    undoSnapshots.push(current);
+    const next = redoSnapshots.pop()!;
+    ctx.putImageData(next, 0, 0);
   }
 
   return {

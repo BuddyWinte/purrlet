@@ -52,6 +52,10 @@ export function toRgbaString({ r, g, b, a }: RgbaColor): string {
 function getColorParserContext() {
   if (colorParserContext) return colorParserContext;
 
+  if (typeof document === "undefined") {
+    throw new Error("[Purrlet] Document is not available. Cannot parse color in SSR environment.");
+  }
+
   const canvas = document.createElement("canvas");
   canvas.width = 1;
   canvas.height = 1;
