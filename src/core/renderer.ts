@@ -31,6 +31,9 @@ export function createRenderer(ctx: CanvasRenderingContext2D, history: any, hook
     pointerHandlers() {
       return {
         down(p: any) {
+          if (currentTool && currentTool.modifiesCanvas !== false) {
+            history.saveState();
+          }
           interaction = [clonePointer(p)];
           toolInstance?.onDown(p, { ctx });
         },
@@ -53,7 +56,6 @@ export function createRenderer(ctx: CanvasRenderingContext2D, history: any, hook
           toolInstance?.onUp(p, { ctx });
 
           if (currentTool && currentTool.modifiesCanvas !== false) {
-            history.saveState();
             hooks.onCommit?.({
               tool: currentTool.name,
               config: currentTool.config,
