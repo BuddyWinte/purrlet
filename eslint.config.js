@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   {
     ignores: ["dist/**", "node_modules/**"],
   },
