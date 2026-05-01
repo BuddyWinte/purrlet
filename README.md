@@ -27,7 +27,7 @@ or via cdn:
 
 ```html
 <script type="module">
-  import { Purrlet } from "https://unpkg.com/purrlet/dist/purrlet.mjs";
+  import { Purrlet } from "https://unpkg.com/purrlet/dist/purrlet.min.js";
 </script>
 ```
 
@@ -212,6 +212,7 @@ then you only need to implement the tool logic.
 the generated file looks like this:
 
 ```javascript
+<<<<<<< HEAD
 import { defineTool } from "./defineTool";
 import type { ToolInstance } from "./types";
 
@@ -251,3 +252,7 @@ after that:
 1. replace the starter logic with the actual tool behavior
 2. run `npm run build`
 3. add docs or tests if the tool needs them
+=======
+tools["myTool"] = myTool;
+```
+>>>>>>> 7c65a04d1b6aa1dd044b96621e921fe91c0d776e
