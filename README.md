@@ -33,6 +33,28 @@ purrlet handles the drawing logic.
 npm install purrlet
 ```
 
+framework-specific subpath imports are also supported, so you can keep examples aligned with your stack:
+
+```javascript
+import { Purrlet } from "purrlet/vue";
+import { Purrlet } from "purrlet/sveltekit";
+import { Purrlet } from "purrlet/astro";
+```
+
+available aliases:
+
+- `purrlet/react`
+- `purrlet/next`
+- `purrlet/vue`
+- `purrlet/nuxt`
+- `purrlet/svelte`
+- `purrlet/sveltekit`
+- `purrlet/astro`
+- `purrlet/solid`
+- `purrlet/solidstart`
+- `purrlet/qwik`
+- `purrlet/remix`
+
 or via cdn:
 
 ```html
