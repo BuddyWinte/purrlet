@@ -5,11 +5,6 @@ a lightweight, headless drawbox-style canvas engine for indie sites and creative
 simple. fast. flexible.
 
 > purrlet is in VERY early beta. expect bugs. expect things to break.
-<img src="https://img.shields.io/badge/version-0.2.0-orange?style=flat-square" alt="Version" />
-<img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License" />
-<a href="https://www.npmjs.com/package/purrlet"><img src="https://img.shields.io/npm/v/purrlet?style=flat-square&color=crimson" alt="npm" /></a>
-<img src="https://img.shields.io/badge/dependencies-zero-blue?style=flat-square" alt="Zero Dependencies" />
-<img src="https://img.shields.io/badge/typescript-5.4+-3178c6?style=flat-square" alt="TypeScript" />
 
 ---
 
