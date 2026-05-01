@@ -4,6 +4,7 @@ a lightweight, headless drawbox-style canvas engine for indie sites and creative
 
 simple. fast. flexible.
 
+> > [!IMPORTANT]  
 > purrlet is in VERY early beta. expect bugs. expect things to break.
 
 ---
@@ -63,6 +64,7 @@ p.setTool("eyedropper", {
 });
 ```
 
+>[!NOTE]  
 > the following tools exist:
 > **brush**, **line**, **eraser**, **fill**, **eyedropper**
 
@@ -100,7 +102,7 @@ save: {
 
 - `commands`: stores replayable tool interactions in `localStorage`. best when the drawing is made through purrlet tools.
 - `blob`: stores a PNG `Blob` in `IndexedDB`. use this when you also draw directly with `ctx`, seed scenes manually, or need a full raster snapshot.
-- `data-url`: legacy mode. stores base64 PNG data in `localStorage`.
+- `data-url`: legacy mode. stores base64 PNG data in `localStorage`. (NOT RECOMMENDED, obselete and will be removed in future versions)
 
 ```javascript
 await p.clearSave();
@@ -111,7 +113,7 @@ await p.clearSave();
 ## uploading
 
 purrlet supports **imgbb** and **imgur** out of the box.
-you can also plug in your own thing. anything. go wild.
+you can also plug in your own thing. anything.
 
 ```javascript
 // imgbb
@@ -192,7 +194,7 @@ type PurrletConfig = {
 
 ### adding built-in tools
 
-if you are contributing through the github repo, you should not have to hand-wire a bunch of files just to open a tool PR.
+if you are contributing through the github repo and wish to make a new tool / drawing tool:
 
 start with:
 
@@ -252,7 +254,3 @@ after that:
 1. replace the starter logic with the actual tool behavior
 2. run `npm run build`
 3. add docs or tests if the tool needs them
-=======
-tools["myTool"] = myTool;
-```
->>>>>>> 7c65a04d1b6aa1dd044b96621e921fe91c0d776e
