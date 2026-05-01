@@ -9,7 +9,7 @@ simple. fast. flexible.
 <p align="center">
 
 ![GitHub Release](https://img.shields.io/github/v/release/buddywinte/purrlet)
-![Discord](https://img.shields.io/discord/1375986160995930132?style=plastic&logo=discord&label=Discord)
+[![Discord](https://img.shields.io/discord/1375986160995930132?style=plastic&logo=discord&label=Discord)](https://discord.gg/Ruk58PhJvm) <- click to join the discord!
 ![NPM Version](https://img.shields.io/npm/v/purrlet)
 ![Downloads](https://img.shields.io/npm/dm/purrlet)
 ![Total Downloads](https://img.shields.io/npm/dt/purrlet)
