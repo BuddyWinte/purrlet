@@ -15,41 +15,79 @@ export const fillTool = defineTool({
       onDown(p, { ctx }) {
         const width = ctx.canvas.width;
         const height = ctx.canvas.height;
-        const x = clamp(Math.floor(p.x), 0, width - 1);
-        const y = clamp(Math.floor(p.y), 0, height - 1);
+        if (width <= 0 || height <= 0) return;
+
+        const startX = Math.max(0, Math.min(width - 1, Math.floor(p.x)));
+        const startY = Math.max(0, Math.min(height - 1, Math.floor(p.y)));
+
         const image = ctx.getImageData(0, 0, width, height);
-        const { data } = image;
-        const startIndex = getIndex(x, y, width);
-        const target = readColor(data, startIndex);
-        const next = parseCssColor(config.color ?? "#000");
-        const tolerance = Math.max(0, config.tolerance ?? 0);
+        const data = image.data;
 
-        if (colorsMatch(target, next, tolerance)) return;
+        const fill = parseCssColor(config.color ?? "#000");
+        const tolerance = Math.max(0, config.tolerance ?? 96);
 
-        const stack: Array<[number, number]> = [[x, y]];
+        const seedIdx = startY * width + startX;
+        const seedOffset = seedIdx * 4;
+        const tr = data[seedOffset];
+        const tg = data[seedOffset + 1];
+        const tb = data[seedOffset + 2];
+        const ta = data[seedOffset + 3];
 
-        while (stack.length > 0) {
-          const point = stack.pop();
-          if (!point) continue;
+        if (tr === fill.r && tg === fill.g && tb === fill.b && ta === fill.a) {
+          return;
+        }
 
-          const [cx, cy] = point;
+        const total = width * height;
+        const weights = new Uint8Array(total);
+        const seen = new Uint8Array(total);
+        const stack: number[] = [seedIdx];
+        seen[seedIdx] = 1;
 
-          if (cx < 0 || cy < 0 || cx >= width || cy >= height) {
-            continue;
+        while (stack.length) {
+          const idx = stack.pop()!;
+          const offset = idx * 4;
+
+          const dist = Math.max(
+            Math.abs(data[offset] - tr),
+            Math.abs(data[offset + 1] - tg),
+            Math.abs(data[offset + 2] - tb),
+            Math.abs(data[offset + 3] - ta)
+          );
+
+          if (tolerance === 0 ? dist > 0 : dist > tolerance) continue;
+
+          weights[idx] =
+            tolerance === 0 ? 255 : Math.ceil((1 - dist / tolerance) * 255);
+
+          const x = idx % width;
+          if (x > 0 && !seen[idx - 1]) {
+            seen[idx - 1] = 1;
+            stack.push(idx - 1);
           }
-
-          const index = getIndex(cx, cy, width);
-
-          if (!colorsMatch(readColor(data, index), target, tolerance)) {
-            continue;
+          if (x < width - 1 && !seen[idx + 1]) {
+            seen[idx + 1] = 1;
+            stack.push(idx + 1);
           }
+          if (idx >= width && !seen[idx - width]) {
+            seen[idx - width] = 1;
+            stack.push(idx - width);
+          }
+          if (idx < total - width && !seen[idx + width]) {
+            seen[idx + width] = 1;
+            stack.push(idx + width);
+          }
+        }
 
-          writeColor(data, index, next);
-
-          stack.push([cx + 1, cy]);
-          stack.push([cx - 1, cy]);
-          stack.push([cx, cy + 1]);
-          stack.push([cx, cy - 1]);
+        for (let i = 0; i < total; i++) {
+          const weight = weights[i];
+          if (!weight) continue;
+          const offset = i * 4;
+          const t = weight / 255;
+          const inv = 1 - t;
+          data[offset] = data[offset] * inv + fill.r * t;
+          data[offset + 1] = data[offset + 1] * inv + fill.g * t;
+          data[offset + 2] = data[offset + 2] * inv + fill.b * t;
+          data[offset + 3] = data[offset + 3] * inv + fill.a * t;
         }
 
         ctx.putImageData(image, 0, 0);
@@ -61,44 +99,3 @@ export const fillTool = defineTool({
     };
   },
 });
-
-function getIndex(x: number, y: number, width: number) {
-  return (y * width + x) * 4;
-}
-
-function readColor(data: Uint8ClampedArray, index: number) {
-  return {
-    r: data[index],
-    g: data[index + 1],
-    b: data[index + 2],
-    a: data[index + 3],
-  };
-}
-
-function writeColor(
-  data: Uint8ClampedArray,
-  index: number,
-  color: { r: number; g: number; b: number; a: number }
-) {
-  data[index] = color.r;
-  data[index + 1] = color.g;
-  data[index + 2] = color.b;
-  data[index + 3] = color.a;
-}
-
-function colorsMatch(
-  a: { r: number; g: number; b: number; a: number },
-  b: { r: number; g: number; b: number; a: number },
-  tolerance: number
-) {
-  return (
-    Math.abs(a.r - b.r) <= tolerance &&
-    Math.abs(a.g - b.g) <= tolerance &&
-    Math.abs(a.b - b.b) <= tolerance &&
-    Math.abs(a.a - b.a) <= tolerance
-  );
-}
-
-function clamp(value: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, value));
-}
