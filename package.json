@@ -1,7 +1,7 @@
 {
   "name": "purrlet",
-  "version": "1.0.4",
-  "description": "A lightweight headless drawbox-style canvas engine for indie sites and creative side projects. simple, fast, flexible.",
+  "version": "2.0.0",
+  "description": "A lightweight headless canvas drawing engine for building interactive drawing tools and websites. meow",
   "type": "module",
   "main": "./dist/purrlet.mjs",
   "module": "./dist/purrlet.mjs",
@@ -78,7 +78,6 @@
     "node": ">=18"
   },
   "scripts": {
-    "tool:new": "node ./scripts/create-tool.mjs",
     "clean": "rm -rf dist",
     "dev": "rollup -c --watch",
     "build": "rollup -c",
@@ -104,6 +103,7 @@
     "side-project",
     "creator-tools"
   ],
+  "sideEffects": false,
   "author": "BuddyWinte",
   "license": "MIT",
   "homepage": "https://github.com/BuddyWinte/Purrlet#readme",
