@@ -1,5 +1,7 @@
 # Purrlet
 
+## You are looking at the v2 release, it is in beta and will not work great
+
 a lightweight, headless drawbox-style canvas engine for indie sites and creative projects.
 
 simple. fast. flexible.
