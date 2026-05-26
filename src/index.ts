@@ -1,29 +1,9 @@
 /*!
- * Purrlet v1.0.4
+ * Purrlet v2.0.0
  *
- * A lightweight headless drawbox-style canvas engine for indie sites and creative side projects. simple, fast, flexible.
- * meow
- *
- * Created by BuddyWinte and contributors
+ * Created by BuddyWinte and pawsome contributors
  * https://github.com/BuddyWinte/Purrlet
- *
- * SPDX-License-Identifier: MIT
+ * 
+ * License: MIT
  */
 
-export { Purrlet } from "./core/Purrlet";
-export {
-  brushTool,
-  createToolRegistry,
-  defineTool,
-  eraserTool,
-  eyedropperTool,
-  fillTool,
-  lineTool,
-} from "./tools";
-export type {
-  Pointer,
-  Tool,
-  ToolContext,
-  ToolInstance,
-  ToolMap,
-} from "./tools";
