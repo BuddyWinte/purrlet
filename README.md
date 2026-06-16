@@ -22,26 +22,26 @@ Purrlet is licensed under the MIT License. See the [LICENSE](./LICENSE) for full
 Purrlet is a headless canvas drawing engine. "You handle the UI, we handle the logic"
 
 ## Planned API:
-- purrlet.attach(canvas) - reattaches purrlet to a different canvas without recreating the instance
-- purrlet.detach() - stops listening to inputs and disconnects from the canvas
-- purrlet.render() - forces a redraw of the entire scene from internal state
-- purrlet.resize(width,height) - changes canvas buffer size, but does not scale content
-- purrlet.clear(boolean) - clears the canvas (trash basically), boolean is for weather or not to omit it into history
-- purrlet.setTool(tool) - takes in a tool id (must be registered through the registerTool)
-- purrlet.getTool() - returns the current tool object
-- purrlet.getToolById() - returns a tool object from its ID
-- purrlet.registerTool(toolObject) - adds a tool to the registery
-- purrlet.unregisterTool(id) - unregisters a tool
-- purrlet.listTools() - returns a list of all the tools registered
-- purrlet.undo() - undo an action
-- purrlet.redo() - redo a recently undone action
-- purrlet.clearHistory() - clear history without clearing canvas
-- purrlet.export() - custom uploader function, **gets a blob of the canvas**
-- purrlet.upload() - **DEPRECATED**, alias of export(), simply to try and prevent breaking code
+[ ] purrlet.attach(canvas) - reattaches purrlet to a different canvas without recreating the instance
+[ ] purrlet.detach() - stops listening to inputs and disconnects from the canvas
+[ ] purrlet.render() - forces a redraw of the entire scene from internal state
+[ ] purrlet.resize(width,height) - changes canvas buffer size, but does not scale content
+[ ] purrlet.clear(boolean) - clears the canvas (trash basically), boolean is for weather or not to omit it into history
+[ ] purrlet.setTool(tool) - takes in a tool id (must be registered through the registerTool)
+[ ] purrlet.getTool() - returns the current tool object
+[ ] purrlet.getToolById() - returns a tool object from its ID
+[ ] purrlet.registerTool(toolObject) - adds a tool to the registery
+[ ] purrlet.unregisterTool(id) - unregisters a tool
+[ ] purrlet.listTools() - returns a list of all the tools registered
+[ ] purrlet.undo() - undo an action
+[ ] purrlet.redo() - redo a recently undone action
+[ ] purrlet.clearHistory() - clear history without clearing canvas
+[ ] purrlet.export() - custom uploader function, **gets a blob of the canvas**
+[ ] purrlet.upload() - **DEPRECATED**, alias of export(), simply to try and prevent breaking code
 
 **events**:
-- purrlet.on(event,data)
-- purrlet.emit() - **INTERNAL ONLY**, emit events
+[ ] purrlet.on(event,data)
+[ ] purrlet.emit() - **INTERNAL ONLY**, emit events
 
 ## Save Methods:
 **The `data-url` type will no longer be supported, it will just error out saying unknown type.**

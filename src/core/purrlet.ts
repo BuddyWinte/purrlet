@@ -1,17 +1,25 @@
 "use strict";
+/*!
+ * Purrlet v2.0.0
+ *
+ * Created by BuddyWinte and pawsome contributors
+ * https://github.com/BuddyWinte/Purrlet
+ * 
+ * License: MIT
+ */
 
 import type { PurrletConfig, Tool, ToolInstance, ToolMap, PurrletPointer } from "../types";
 import { bindPointer } from "./pointer";
 
 // import each tool
 import { brushTool } from "../tools/brush";
+import { Renderer } from "./renderer";
 
 export class Purrlet {
   private config: PurrletConfig;
-
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
-
+  private renderer: Renderer;
   private tools: ToolMap = {};
   private currentTool: ToolInstance | null = null;
 
@@ -22,22 +30,22 @@ export class Purrlet {
     this.canvas.height = this.canvas.clientHeight;
     this.ctx = this.getContext(this.canvas);
     this.bindPointerEvents();
-
+    this.renderer = new Renderer(this.ctx);
     this.registerTool(brushTool);
   }
 
   private bindPointerEvents() {
     bindPointer(this.canvas, {
       down: (p: PurrletPointer, e) => {
-        this.currentTool?.onPointerDown?.(p as any, this.ctx);
+        this.currentTool?.onPointerDown?.(p as any, this.renderer);
       },
 
       move: (p: PurrletPointer, e) => {
-        this.currentTool?.onPointerMove?.(p as any, this.ctx);
+        this.currentTool?.onPointerMove?.(p as any, this.renderer);
       },
 
       up: (p: PurrletPointer, e) => {
-        this.currentTool?.onPointerUp?.(p as any, this.ctx);
+        this.currentTool?.onPointerUp?.(p as any, this.renderer);
       },
     });
   }

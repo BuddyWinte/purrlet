@@ -1,3 +1,5 @@
+import { Renderer } from "./core/renderer";
+
 export type PurrletConfig = {
     canvas: HTMLCanvasElement;
     debug?: boolean;
@@ -5,9 +7,9 @@ export type PurrletConfig = {
 }
 
 export interface ToolInstance {
-    onPointerDown?(p: PurrletPointer, ctx: CanvasRenderingContext2D): void;
-    onPointerMove?(p: PurrletPointer, ctx: CanvasRenderingContext2D): void;
-    onPointerUp?(p: PurrletPointer, ctx: CanvasRenderingContext2D): void;
+    onPointerDown?(p: PurrletPointer, renderer: Renderer): void;
+    onPointerMove?(p: PurrletPointer, renderer: Renderer): void;
+    onPointerUp?(p: PurrletPointer, renderer: Renderer): void;
 }
 
 export interface Tool<TConfig = any> {
@@ -27,3 +29,19 @@ export type PurrletPointer = {
     pointerId: number;
     isDown: boolean;
 }
+
+export type StrokeStyle = {
+  color: string;
+  size: number;
+};
+
+export type StrokePoint = {
+    x: number;
+    y: number;
+    size: number;
+}
+
+export type Stroke = {
+  color: string;
+  points: StrokePoint[];
+};
