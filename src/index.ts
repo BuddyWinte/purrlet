@@ -7,3 +7,6 @@
  * License: MIT
  */
 
+export { Purrlet } from "./core/purrlet";
+
+export type * from "./types"

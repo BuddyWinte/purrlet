@@ -6,69 +6,6 @@
   "main": "./dist/purrlet.mjs",
   "module": "./dist/purrlet.mjs",
   "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./react": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./next": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./vue": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./nuxt": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./svelte": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./sveltekit": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./astro": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./solid": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./solidstart": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./qwik": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./remix": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./package.json": "./package.json"
-  },
   "files": [
     "dist",
     "README.md",

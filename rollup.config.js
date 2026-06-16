@@ -1,45 +1,23 @@
 import resolve from "@rollup/plugin-node-resolve";
-import terser from "@rollup/plugin-terser";
 import typescript from "@rollup/plugin-typescript";
+import terser from "@rollup/plugin-terser";
 
-const banner = `/*!
- * Purrlet v1.0.4
- *
- * A lightweight headless drawbox-style canvas engine for indie sites and creative side projects. simple, fast, flexible.
- * meow
- *
- * Created by BuddyWinte and contributors
- * https://github.com/BuddyWinte/Purrlet
- *
- * SPDX-License-Identifier: MIT
- */`;
+export default {
+  input: "src/index.ts",
 
-export default [
-  {
-    input: "src/index.ts",
-    output: [
-      {
-        file: "dist/purrlet.min.js",
-        format: "umd",
-        name: "Purrlet",
-        sourcemap: true,
-        banner,
-      },
-      {
-        file: "dist/purrlet.mjs",
-        format: "es",
-        sourcemap: true,
-        banner,
-      },
-    ],
-    plugins: [
-      resolve(),
-      typescript({ tsconfig: "./tsconfig.json" }),
-      terser({
-        format: {
-          comments: /^!/,
-        },
-      }),
-    ],
-  },
-];
+  output: [
+    {
+      file: "dist/purrlet.mjs",
+      format: "esm",
+      sourcemap: true,
+    },
+  ],
+
+  plugins: [
+    resolve(),
+    typescript({
+      tsconfig: "./tsconfig.json",
+    }),
+    terser(),
+  ],
+};

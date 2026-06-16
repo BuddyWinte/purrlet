@@ -41,7 +41,7 @@ Purrlet is a headless canvas drawing engine. "You handle the UI, we handle the l
 
 **events**:
 - purrlet.on(event,data)
-- purrlet.emit() - **INTERNAL USE**, emit events
+- purrlet.emit() - **INTERNAL ONLY**, emit events
 
 ## Save Methods:
 **The `data-url` type will no longer be supported, it will just error out saying unknown type.**
