@@ -42,3 +42,8 @@ Purrlet is a headless canvas drawing engine. "You handle the UI, we handle the l
 **events**:
 - purrlet.on(event,data)
 - purrlet.emit() - **INTERNAL USE**, emit events
+
+## Save Methods:
+**The `data-url` type will no longer be supported, it will just error out saying unknown type.**
+`commands`: stores deterministic drawing actions (tool inputs + state changes); can be serialized to localStorage, IndexedDB, etc. **DEFAULT**
+`blob`: stores a raster snapshot of the current canvas state; does not preserve tool history or editability **NOT RECOMMENDED**
