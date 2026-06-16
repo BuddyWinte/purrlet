@@ -1,95 +1,141 @@
-export type CatboxUploaderOptions = {
-    /**
-     * Optional Catbox user hash
-     * 
-     * Enables account-linked uploads instead of anonymous uploads
-     * 
-     * @readonly
-     */
-    readonly userHash?: string;
+/*!
+ * Purrlet v2.0.0
+ *
+ * Created by BuddyWinte and pawsome contributors
+ * https://github.com/BuddyWinte/Purrlet
+ * 
+ * License: MIT
+ */
 
-    /**
-     * Custom Catbox API endpoint
-     * 
-     * @default "https://catbox.moe/user/api.php"
-     * @readonly
-     */
-    readonly endpoint?: string;
+/**
+ * Configuration for Catbox Uploader
+ *
+ * @public
+ */
+export interface CatboxUploaderOptions {
+  /**
+   * Optional Catbox user hash.
+   *
+   * When provided, uploads are associated with the user's Catbox account
+   * instead of being uploaded anonymously.
+   *
+   * @see https://catbox.moe
+   */
+  readonly userHash?: string;
 
-    /**
-     * Upload a remote URL instead of uploading a Blob directly
-     * 
-     * If provided, Catbox will fetch the URL itself using the `urlupload` request type.
-     * 
-     * @readonly
-     */
-    readonly url?: string;
+  /**
+   * Catbox API endpoint.
+   *
+   * @default "https://catbox.moe/user/api.php"
+   */
+  readonly endpoint?: string;
 
-    /**
-     * Custom fetch implementation
-     * 
-     * Useful for polyfills, custom runtimes, etc.
-     * 
-     * @readonly
-     */
-    readonly fetch?: typeof globalThis.fetch;
+  /**
+   * Custom Fetch implementation.
+   *
+   * Useful for non-browser enviorments.
+   *
+   * @default globalThis.fetch
+   */
+  readonly fetch?: typeof globalThis.fetch;
+
+  /**
+   * Abort signal passed to fetch.
+   */
+  readonly signal?: AbortSignal;
 }
 
 /**
- * Creates a Catbox upload handler compatible with Purrlet
- * 
- * The returned function is fully Promise-based
- * 
- * @requires globalThis.fetch
+ * Creates a Catbox upload handler.
+ *
+ * The returned function uploads image blobs to Catbox and resolves
+ * with the resulting URL.
+ *
+ * @param options - Uploader configuration.
+ *
+ * @returns Upload function that accepts a Blob and resolves to the
+ * uploaded Catbox URL.
+ *
+ * @throws {Error}
+ * Thrown when the Fetch API is unavailable.
+ *
+ * @example
+ * ```ts
+ * const upload = catboxUploader();
+ *
+ * const url = await upload(blob);
+ * console.log(url);
+ * ```
+ *
+ * @example
+ * ```ts
+ * const upload = catboxUploader({
+ *   userHash: process.env.CATBOX_USER_HASH
+ * });
+ *
+ * const url = await upload(blob);
+ * ```
+ *
+ * @public
  */
 export function catboxUploader(
-    options: CatboxUploaderOptions = {}
+  options: CatboxUploaderOptions = {}
 ) {
-    const {
+  const {
     userHash,
     endpoint = "https://catbox.moe/user/api.php",
-    url,
     fetch: customFetch,
+    signal,
   } = options;
 
   const fetchImpl = customFetch ?? globalThis.fetch;
 
   if (!fetchImpl) {
     throw new Error(
-        "[Purrlet] Fetch API is not available in this environment"
-    )
+      "[Purrlet] Fetch API is not available in this environment"
+    );
   }
 
   /**
-   * Uploads a canvas blob to Catbox
-   * 
-   * @param blob - Image blob
-   * @returns Promise resolving to Catbox URL
+   * Upload a Blob to Catbox.
+   *
+   * @param blob - Blob to upload.
+   *
+   * @returns Direct Catbox URL.
+   *
+   * @throws {Error}
+   * Thrown when:
+   * - The upload request fails.
+   * - Catbox returns an error response.
+   * - Catbox returns an invalid URL.
    */
-  return async(blob: Blob): Promise<string> => {
+  return async (blob: Blob): Promise<string> => {
     const form = new FormData();
 
-    if (url) {
-        form.append("reqtype", "urlupload");
-        form.append("url", url);
-    } else {
-        form.append("reqtype", "fileupload");
-        form.append("fileToUpload", blob, "purrlet.png");
-    }
+    const extension =
+      blob.type.split("/")[1]?.toLowerCase() ?? "png";
+
+    form.append("reqtype", "fileupload");
+    form.append(
+      "fileToUpload",
+      blob,
+      `purrlet.${extension}`
+    );
 
     if (userHash) {
-        form.append("userhash", userHash)
+      form.append("userhash", userHash);
     }
 
     const response = await fetchImpl(endpoint, {
       method: "POST",
       body: form,
+      signal,
     });
 
     if (!response.ok) {
-        throw new Error(
-            `[Purrlet] Catbox upload failed (${response.status})`
-        )
+      throw new Error(
+        `[Purrlet] Catbox upload failed (${response.status} ${response.statusText})`
+      );
     }
 
     const text = (await response.text()).trim();
@@ -101,6 +147,14 @@ export function catboxUploader(
       throw new Error(text);
     }
 
+    try {
+      new URL(text);
+    } catch {
+      throw new Error(
+        `[Purrlet] Invalid Catbox response: ${text}`
+      );
+    }
+
     return text;
-  }
+  };
 }
