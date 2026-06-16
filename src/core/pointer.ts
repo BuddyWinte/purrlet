@@ -11,8 +11,8 @@ export function bindPointer(
     const getPoint = (e: PointerEvent): PurrletPointer => {
         const rect = canvas.getBoundingClientRect();
         return {
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top,
+            x: (e.clientX - rect.left),
+            y: (e.clientY - rect.top),
             pressure: e.pressure ?? 0,
             tiltX: e.tiltX ?? 0,
             tiltY: e.tiltY ?? 0,

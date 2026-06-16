@@ -1,17 +1,14 @@
 "use strict";
-/*!
- * Purrlet v2.0.0
- *
- * Created by BuddyWinte and pawsome contributors
- * https://github.com/BuddyWinte/Purrlet
- * 
- * License: MIT
- */
 
-import type { PurrletConfig, Tool, ToolInstance, ToolMap, PurrletPointer } from "../types";
+import type {
+  PurrletConfig,
+  Tool,
+  ToolInstance,
+  ToolMap,
+  PurrletPointer,
+} from "../types";
+
 import { bindPointer } from "./pointer";
-
-// import each tool
 import { brushTool } from "../tools/brush";
 import { Renderer } from "./renderer";
 
@@ -22,30 +19,45 @@ export class Purrlet {
   private renderer: Renderer;
   private tools: ToolMap = {};
   private currentTool: ToolInstance | null = null;
+  private currentToolName: string | null = null;
+  private toolConfigs: Record<string, any> = {};
 
   constructor(config: PurrletConfig) {
     this.config = config;
     this.canvas = config.canvas;
-    this.canvas.width = this.canvas.clientWidth;
-    this.canvas.height = this.canvas.clientHeight;
+
+    const rect = this.canvas.getBoundingClientRect();
+    this.canvas.width = rect.width * devicePixelRatio;
+    this.canvas.height = rect.height * devicePixelRatio;
+
     this.ctx = this.getContext(this.canvas);
-    this.bindPointerEvents();
+    this.ctx.scale(devicePixelRatio, devicePixelRatio);
+
     this.renderer = new Renderer(this.ctx);
+
+    this.bindPointerEvents();
+
     this.registerTool(brushTool);
+
+    if (config.defaultTool) {
+      this.setTool(config.defaultTool);
+    } else {
+      this.setTool("brush");
+    }
   }
 
   private bindPointerEvents() {
     bindPointer(this.canvas, {
-      down: (p: PurrletPointer, e) => {
-        this.currentTool?.onPointerDown?.(p as any, this.renderer);
+      down: (p: PurrletPointer) => {
+        this.currentTool?.onPointerDown?.(p, this.renderer);
       },
 
-      move: (p: PurrletPointer, e) => {
-        this.currentTool?.onPointerMove?.(p as any, this.renderer);
+      move: (p: PurrletPointer) => {
+        this.currentTool?.onPointerMove?.(p, this.renderer);
       },
 
-      up: (p: PurrletPointer, e) => {
-        this.currentTool?.onPointerUp?.(p as any, this.renderer);
+      up: (p: PurrletPointer) => {
+        this.currentTool?.onPointerUp?.(p, this.renderer);
       },
     });
   }
@@ -55,23 +67,53 @@ export class Purrlet {
   }
 
   unregisterTool(name: string) {
-    if (this.tools[name]) {
-      delete this.tools[name];
-    }
+    delete this.tools[name];
 
-    if (this.currentTool && (this.currentTool as any).name === name) {
+    if (this.currentToolName === name) {
+      this.currentTool?.onDeactivate?.();
       this.currentTool = null;
+      this.currentToolName = null;
     }
   }
 
-  setTool(name: string, config?: any) {
+  setTool(name: string, config: any = {}) {
     const tool = this.tools[name];
 
     if (!tool) {
       throw new Error(`[Purrlet] Tool not found: ${name}`);
     }
 
-    this.currentTool = tool.create(config ?? {});
+    this.currentTool?.onDeactivate?.();
+
+    this.currentToolName = name;
+    this.toolConfigs[name] = config;
+
+    this.currentTool = tool.create(config);
+
+    this.currentTool.onActivate?.();
+  }
+
+  updateToolConfig(name: string, patch: any) {
+    const tool = this.tools[name];
+
+    if (!tool) return;
+
+    this.toolConfigs[name] = {
+      ...(this.toolConfigs[name] ?? {}),
+      ...patch,
+    };
+
+    if (this.currentToolName !== name) return;
+
+    this.currentTool?.onDeactivate?.();
+
+    this.currentTool = tool.create(this.toolConfigs[name]);
+
+    this.currentTool.onActivate?.();
+  }
+
+  getToolConfig(name: string) {
+    return this.toolConfigs[name] ?? null;
   }
 
   getToolById(name: string) {
@@ -86,7 +128,11 @@ export class Purrlet {
     return this.currentTool;
   }
 
-  private getContext(canvas: HTMLCanvasElement): CanvasRenderingContext2D {
+  clear() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
+
+  private getContext(canvas: HTMLCanvasElement) {
     const ctx = canvas.getContext("2d");
 
     if (!ctx) {
@@ -94,9 +140,5 @@ export class Purrlet {
     }
 
     return ctx;
-  }
-
-  clear() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 }

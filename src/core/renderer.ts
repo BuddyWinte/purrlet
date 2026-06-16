@@ -1,3 +1,13 @@
+"use strict";
+/*!
+ * Purrlet v2.0.0
+ *
+ * Created by BuddyWinte and pawsome contributors
+ * https://github.com/BuddyWinte/Purrlet
+ * 
+ * License: MIT
+ */
+
 import type { Stroke } from "../types";
 
 function lerp(a: number, b: number, t: number) {
@@ -26,28 +36,25 @@ export class Renderer {
 
     const pts = this.currentStroke.points;
     const prev = pts[pts.length - 1];
+
     pts.push({ x, y, size });
 
-    this.drawLine(prev.x, prev.y, x, y, size, smoothing);
+    this.drawLine(prev.x, prev.y, x, y, prev.size, size, smoothing);
   }
 
   endStroke() {
     this.currentStroke = null;
   }
 
-  private drawLine(x1: number, y1: number, x2: number, y2: number, size: number, smoothing: number) {
-    this.ctx.lineWidth = size;
-    this.ctx.lineCap = "round";
-    this.ctx.lineJoin = "round";
-
-    if (smoothing <= 0) {
-      this.ctx.beginPath();
-      this.ctx.moveTo(x1, y1);
-      this.ctx.lineTo(x2, y2);
-      this.ctx.stroke();
-      return;
-    }
-
+  private drawLine(
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    s1: number,
+    s2: number,
+    smoothing: number,
+  ) {
     const steps = Math.max(1, Math.floor(6 * smoothing));
 
     let px = x1;
@@ -55,8 +62,14 @@ export class Renderer {
 
     for (let i = 1; i <= steps; i++) {
       const t = i / steps;
+
       const x = lerp(x1, x2, t);
       const y = lerp(y1, y2, t);
+      const size = lerp(s1, s2, t);
+
+      this.ctx.lineWidth = size;
+      this.ctx.lineCap = "round";
+      this.ctx.lineJoin = "round";
 
       this.ctx.beginPath();
       this.ctx.moveTo(px, py);

@@ -28,6 +28,7 @@ Purrlet is a headless canvas drawing engine. "You handle the UI, we handle the l
 [ ] purrlet.resize(width,height) - changes canvas buffer size, but does not scale content
 [ ] purrlet.clear(boolean) - clears the canvas (trash basically), boolean is for weather or not to omit it into history
 [ ] purrlet.setTool(tool) - takes in a tool id (must be registered through the registerTool)
+[ ] purrlet.updateToolConfig(tool, config) - updates a tool config without having to reset the instance
 [ ] purrlet.getTool() - returns the current tool object
 [ ] purrlet.getToolById() - returns a tool object from its ID
 [ ] purrlet.registerTool(toolObject) - adds a tool to the registery
