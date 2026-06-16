@@ -4,7 +4,7 @@
  *
  * Created by BuddyWinte and pawsome contributors
  * https://github.com/BuddyWinte/Purrlet
- * 
+ *
  * License: MIT
  */
 
@@ -27,6 +27,9 @@ export class Renderer {
       color,
       points: [{ x, y, size }],
     };
+
+    this.ctx.strokeStyle = color;
+    this.ctx.fillStyle = color;
 
     this.drawDot(x, y, size);
   }
@@ -55,6 +58,10 @@ export class Renderer {
     s2: number,
     smoothing: number,
   ) {
+    const color = this.currentStroke?.color ?? "#000";
+
+    this.ctx.strokeStyle = color;
+
     const steps = Math.max(1, Math.floor(6 * smoothing));
 
     let px = x1;
@@ -82,6 +89,10 @@ export class Renderer {
   }
 
   private drawDot(x: number, y: number, size: number) {
+    const color = this.currentStroke?.color ?? "#000";
+
+    this.ctx.fillStyle = color;
+
     this.ctx.beginPath();
     this.ctx.arc(x, y, size / 2, 0, Math.PI * 2);
     this.ctx.fill();
