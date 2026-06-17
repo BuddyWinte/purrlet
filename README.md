@@ -59,7 +59,7 @@ or via cdn:
 
 ```html
 <script type="module">
-  import { Purrlet } from "https://unpkg.com/purrlet/dist/purrlet.min.js";
+  import { Purrlet } from "https://unpkg.com/purrlet/dist/purrlet.mjs";
 </script>
 ```
 
