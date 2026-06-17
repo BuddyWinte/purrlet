@@ -17,6 +17,10 @@ const banner = `/*!
 export default [
   {
     input: "src/index.ts",
+    plugins: [
+      resolve(),
+      typescript({ tsconfig: "./tsconfig.json" }),
+    ],
     output: [
       {
         file: "dist/purrlet.min.js",
@@ -24,6 +28,13 @@ export default [
         name: "Purrlet",
         sourcemap: true,
         banner,
+        plugins: [
+          terser({
+            format: {
+              comments: /^!/,
+            },
+          }),
+        ],
       },
       {
         file: "dist/purrlet.mjs",
@@ -31,15 +42,6 @@ export default [
         sourcemap: true,
         banner,
       },
-    ],
-    plugins: [
-      resolve(),
-      typescript({ tsconfig: "./tsconfig.json" }),
-      terser({
-        format: {
-          comments: /^!/,
-        },
-      }),
     ],
   },
 ];
