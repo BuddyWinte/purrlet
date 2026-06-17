@@ -8,9 +8,11 @@ export function bindPointer(
 ) {
   const pos = (e: PointerEvent) => {
     const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / (rect.width || 1);
+    const scaleY = canvas.height / (rect.height || 1);
     return {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY,
       isDown: e.buttons > 0,
     };
   };
