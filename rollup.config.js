@@ -3,7 +3,7 @@ import terser from "@rollup/plugin-terser";
 import typescript from "@rollup/plugin-typescript";
 
 const banner = `/*!
- * Purrlet v1.0.4
+ * Purrlet v1.1.0
  *
  * A lightweight headless drawbox-style canvas engine for indie sites and creative side projects. simple, fast, flexible.
  * meow
@@ -41,6 +41,16 @@ export default [
         format: "es",
         sourcemap: true,
         banner,
+        plugins: [
+          terser({
+            format: {
+              comments: /^!/,
+            },
+            compress: {
+              module: true,
+            },
+          }),
+        ],
       },
     ],
   },
