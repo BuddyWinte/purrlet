@@ -1,5 +1,5 @@
 /*!
- * Purrlet v1.0.4
+ * Purrlet v1.1.0
  *
  * A lightweight headless drawbox-style canvas engine for indie sites and creative side projects. simple, fast, flexible.
  * meow
