@@ -29,14 +29,14 @@ It handles drawing logic, input processing, history management, and tool executi
 - [ ] purrlet.detach() - stops listening to inputs and disconnects from the canvas
 - [ ] purrlet.render() - forces a redraw of the entire scene from internal state
 - [ ] purrlet.resize(width,height) - changes canvas buffer size, but does not scale content
-- [ ] purrlet.clear(boolean) - clears the canvas (trash basically), boolean is for weather or not to omit it into history
-- [ ] purrlet.setTool(tool) - takes in a tool id (must be registered through the registerTool)
-- [ ] purrlet.updateToolConfig(tool, config) - updates a tool config without having to reset the instance
-- [ ] purrlet.getTool() - returns the current tool object
-- [ ] purrlet.getToolById() - returns a tool object from its ID
-- [ ] purrlet.registerTool(toolObject) - adds a tool to the registery
-- [ ] purrlet.unregisterTool(id) - unregisters a tool
-- [ ] purrlet.listTools() - returns a list of all the tools registered
+- [x] purrlet.clear(boolean) - clears the canvas (trash basically), boolean is for weather or not to omit it into history
+- [x] purrlet.setTool(tool) - takes in a tool id (must be registered through the registerTool)
+- [x] purrlet.updateToolConfig(tool, config) - updates a tool config without having to reset the instance
+- [x] purrlet.getTool() - returns the current tool object
+- [x] purrlet.getToolById() - returns a tool object from its ID
+- [x] purrlet.registerTool(toolObject) - adds a tool to the registery
+- [x] purrlet.unregisterTool(id) - unregisters a tool
+- [x] purrlet.listTools() - returns a list of all the tools registered
 - [ ] purrlet.undo() - undo an action
 - [ ] purrlet.redo() - redo a recently undone action
 - [ ] purrlet.clearHistory() - clear history without clearing canvas
