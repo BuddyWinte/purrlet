@@ -1,32 +1,27 @@
-"use strict";
-/*!
- * Purrlet v2.0.0
- *
- * Created by BuddyWinte and pawsome contributors
- * https://github.com/BuddyWinte/Purrlet
- *
- * License: MIT
- */
+import type { RendererMode } from "../types";
+import { Document } from "./document";
 
-import type { Stroke } from "../types";
-
-function lerp(a: number, b: number, t: number) {
-  return a + (b - a) * t;
-}
+type Point = { x: number; y: number; size: number };
 
 export class Renderer {
   private ctx: CanvasRenderingContext2D;
-  private currentStroke: Stroke | null = null;
+  private doc: Document;
 
-  constructor(ctx: CanvasRenderingContext2D) {
+  private mode: RendererMode = "draw";
+
+  constructor(ctx: CanvasRenderingContext2D, doc: Document) {
     this.ctx = ctx;
+    this.doc = doc;
+  }
+
+  setMode(mode: RendererMode) {
+    this.mode = mode;
+    this.ctx.globalCompositeOperation =
+      mode === "erase" ? "destination-out" : "source-over";
   }
 
   beginStroke(color: string, size: number, x: number, y: number) {
-    this.currentStroke = {
-      color,
-      points: [{ x, y, size }],
-    };
+    this.doc.beginStroke(color, x, y, size);
 
     this.ctx.strokeStyle = color;
     this.ctx.fillStyle = color;
@@ -34,65 +29,76 @@ export class Renderer {
     this.drawDot(x, y, size);
   }
 
-  addPoint(x: number, y: number, size: number, smoothing = 0) {
-    if (!this.currentStroke) return;
+  addPoint(x: number, y: number, size: number, smoothing = 0.3) {
+    const strokes = this.doc.getStrokes();
+    const stroke = strokes[strokes.length - 1];
+    if (!stroke) return;
 
-    const pts = this.currentStroke.points;
+    const pts = stroke.points;
     const prev = pts[pts.length - 1];
 
-    pts.push({ x, y, size });
+    const cx = prev.x + (x - prev.x) * smoothing;
+    const cy = prev.y + (y - prev.y) * smoothing;
+    const cs = prev.size + (size - prev.size) * smoothing;
 
-    this.drawLine(prev.x, prev.y, x, y, prev.size, size, smoothing);
+    const p = { x: cx, y: cy, size: cs };
+
+    this.doc.addPoint(cx, cy, cs);
+    this.drawSegment(prev, p);
   }
 
   endStroke() {
-    this.currentStroke = null;
+    this.doc.endStroke();
   }
 
-  private drawLine(
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number,
-    s1: number,
-    s2: number,
-    smoothing: number,
-  ) {
-    const color = this.currentStroke?.color ?? "#000";
+  clear() {
+    this.doc.clear();
+    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+  }
 
-    this.ctx.strokeStyle = color;
+  undo() {
+    this.doc.undo();
+    this.redraw();
+  }
 
-    const steps = Math.max(1, Math.floor(6 * smoothing));
+  redraw() {
+    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    this.ctx.globalCompositeOperation = "source-over";
 
-    let px = x1;
-    let py = y1;
+    for (const stroke of this.doc.getStrokes()) {
+      this.ctx.strokeStyle = stroke.color;
 
-    for (let i = 1; i <= steps; i++) {
-      const t = i / steps;
+      for (let i = 1; i < stroke.points.length; i++) {
+        const a = stroke.points[i - 1];
+        const b = stroke.points[i];
 
-      const x = lerp(x1, x2, t);
-      const y = lerp(y1, y2, t);
-      const size = lerp(s1, s2, t);
+        this.ctx.lineWidth = b.size;
+        this.ctx.lineCap = "round";
+        this.ctx.lineJoin = "round";
 
-      this.ctx.lineWidth = size;
-      this.ctx.lineCap = "round";
-      this.ctx.lineJoin = "round";
-
-      this.ctx.beginPath();
-      this.ctx.moveTo(px, py);
-      this.ctx.lineTo(x, y);
-      this.ctx.stroke();
-
-      px = x;
-      py = y;
+        this.ctx.beginPath();
+        this.ctx.moveTo(a.x, a.y);
+        this.ctx.lineTo(b.x, b.y);
+        this.ctx.stroke();
+      }
     }
+
+    this.ctx.globalCompositeOperation =
+      this.mode === "erase" ? "destination-out" : "source-over";
+  }
+
+  private drawSegment(a: Point, b: Point) {
+    this.ctx.lineWidth = b.size;
+    this.ctx.lineCap = "round";
+    this.ctx.lineJoin = "round";
+
+    this.ctx.beginPath();
+    this.ctx.moveTo(a.x, a.y);
+    this.ctx.lineTo(b.x, b.y);
+    this.ctx.stroke();
   }
 
   private drawDot(x: number, y: number, size: number) {
-    const color = this.currentStroke?.color ?? "#000";
-
-    this.ctx.fillStyle = color;
-
     this.ctx.beginPath();
     this.ctx.arc(x, y, size / 2, 0, Math.PI * 2);
     this.ctx.fill();

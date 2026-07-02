@@ -20,6 +20,7 @@ export interface CatboxUploaderOptions {
    * instead of being uploaded anonymously.
    *
    * @see https://catbox.moe
+   * @readonly
    */
   readonly userHash?: string;
 
@@ -27,20 +28,21 @@ export interface CatboxUploaderOptions {
    * Catbox API endpoint.
    *
    * @default "https://catbox.moe/user/api.php"
+   * @readonly
    */
   readonly endpoint?: string;
 
   /**
    * Custom Fetch implementation.
    *
-   * Useful for non-browser enviorments.
-   *
    * @default globalThis.fetch
+   * @readonly
    */
   readonly fetch?: typeof globalThis.fetch;
 
   /**
-   * Abort signal passed to fetch.
+   * Abort signal
+   * @readonly
    */
   readonly signal?: AbortSignal;
 }
@@ -58,23 +60,6 @@ export interface CatboxUploaderOptions {
  *
  * @throws {Error}
  * Thrown when the Fetch API is unavailable.
- *
- * @example
- * ```ts
- * const upload = catboxUploader();
- *
- * const url = await upload(blob);
- * console.log(url);
- * ```
- *
- * @example
- * ```ts
- * const upload = catboxUploader({
- *   userHash: process.env.CATBOX_USER_HASH
- * });
- *
- * const url = await upload(blob);
- * ```
  *
  * @public
  */

@@ -11,6 +11,8 @@ import type {
 import { bindPointer } from "./pointer";
 import { brushTool } from "../tools/brush";
 import { Renderer } from "./renderer";
+import { eraserTool } from "../tools/eraser";
+import { Document } from "./document";
 
 export class Purrlet {
   private config: PurrletConfig;
@@ -33,11 +35,14 @@ export class Purrlet {
     this.ctx = this.getContext(this.canvas);
     this.ctx.scale(devicePixelRatio, devicePixelRatio);
 
-    this.renderer = new Renderer(this.ctx);
+    const doc = new Document();
+    this.renderer = new Renderer(this.ctx, doc);
+
 
     this.bindPointerEvents();
 
     this.registerTool(brushTool);
+    this.registerTool(eraserTool);
 
     if (config.defaultTool) {
       this.setTool(config.defaultTool);
@@ -70,7 +75,7 @@ export class Purrlet {
     delete this.tools[name];
 
     if (this.currentToolName === name) {
-      this.currentTool?.onDeactivate?.();
+      this.currentTool?.onDeactivate?.(this.renderer);
       this.currentTool = null;
       this.currentToolName = null;
     }
@@ -83,14 +88,14 @@ export class Purrlet {
       throw new Error(`[Purrlet] Tool not found: ${name}`);
     }
 
-    this.currentTool?.onDeactivate?.();
+    this.currentTool?.onDeactivate?.(this.renderer);
 
     this.currentToolName = name;
     this.toolConfigs[name] = config;
 
     this.currentTool = tool.create(config);
 
-    this.currentTool.onActivate?.();
+    this.currentTool.onActivate?.(this.renderer);
   }
 
   updateToolConfig(name: string, patch: any) {
@@ -105,11 +110,11 @@ export class Purrlet {
 
     if (this.currentToolName !== name) return;
 
-    this.currentTool?.onDeactivate?.();
+    this.currentTool?.onDeactivate?.(this.renderer);
 
     this.currentTool = tool.create(this.toolConfigs[name]);
 
-    this.currentTool.onActivate?.();
+    this.currentTool.onActivate?.(this.renderer);
   }
 
   getToolConfig(name: string) {

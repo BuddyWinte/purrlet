@@ -10,9 +10,8 @@ export interface ToolInstance {
   onPointerDown?(p: PurrletPointer, renderer: Renderer): void;
   onPointerMove?(p: PurrletPointer, renderer: Renderer): void;
   onPointerUp?(p: PurrletPointer, renderer: Renderer): void;
-
-  onActivate?(): void;
-  onDeactivate?(): void;
+  onActivate?(renderer: Renderer): void;
+  onDeactivate?(renderer: Renderer): void;
 }
 
 export interface Tool<TConfig = any> {
@@ -33,11 +32,6 @@ export type PurrletPointer = {
   isDown: boolean;
 };
 
-export type StrokeStyle = {
-  color: string;
-  size: number;
-};
-
 export type StrokePoint = {
   x: number;
   y: number;
@@ -45,6 +39,21 @@ export type StrokePoint = {
 };
 
 export type Stroke = {
+  id: string;
   color: string;
   points: StrokePoint[];
+};
+
+export type RendererMode = "draw" | "erase";
+
+export type DocPoint = {
+  x: number;
+  y: number;
+  size: number;
+};
+
+export type DocStroke = {
+  id: string;
+  color: string;
+  points: DocPoint[];
 };
