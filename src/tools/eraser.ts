@@ -15,7 +15,6 @@ export const eraserTool: Tool<EraserConfig> = {
     let drawing = false;
 
     const baseSize = config.size ?? 20;
-    const smoothing = config.smoothing ?? 0.3;
     const pressureEnabled = config.pressureEnabled ?? true;
     const minFactor = config.pressureMinSizeFactor ?? 0.3;
 
@@ -50,7 +49,7 @@ export const eraserTool: Tool<EraserConfig> = {
         const size = sizeFor(p);
 
         r.setMode("erase");
-        r.addPoint(p.x, p.y, size, smoothing);
+        r.addPoint(p.x, p.y, size);
       },
 
       onPointerUp(_, r: Renderer) {

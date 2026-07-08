@@ -17,7 +17,6 @@ export const brushTool: Tool<BrushConfig> = {
 
     const color = config.color ?? "#000";
     const baseSize = config.size ?? 5;
-    const smoothing = config.smoothing ?? 0.3;
     const pressureEnabled = config.pressureEnabled ?? true;
     const minFactor = config.pressureMinSizeFactor ?? 0.2;
 
@@ -36,7 +35,7 @@ export const brushTool: Tool<BrushConfig> = {
 
       onPointerMove(p, r: Renderer) {
         if (!drawing || !p.isDown) return;
-        r.addPoint(p.x, p.y, sizeFor(p), smoothing);
+        r.addPoint(p.x, p.y, sizeFor(p));
       },
 
       onPointerUp(_, r: Renderer) {

@@ -13,6 +13,7 @@ import { brushTool } from "../tools/brush";
 import { Renderer } from "./renderer";
 import { eraserTool } from "../tools/eraser";
 import { Document } from "./document";
+import { History } from "./history";
 
 export class Purrlet {
   private config: PurrletConfig;
@@ -36,7 +37,8 @@ export class Purrlet {
     this.ctx.scale(devicePixelRatio, devicePixelRatio);
 
     const doc = new Document();
-    this.renderer = new Renderer(this.ctx, doc);
+    const history = new History();
+    this.renderer = new Renderer(this.ctx, doc, history);
 
 
     this.bindPointerEvents();
@@ -65,6 +67,14 @@ export class Purrlet {
         this.currentTool?.onPointerUp?.(p, this.renderer);
       },
     });
+  }
+
+  undo() {
+    this.renderer.undo();
+  }
+
+  redo() {
+    this.renderer.redo();
   }
 
   registerTool(tool: Tool) {

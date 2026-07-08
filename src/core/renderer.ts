@@ -1,18 +1,17 @@
 import type { RendererMode } from "../types";
 import { Document } from "./document";
+import { History } from "./history";
 
 type Point = { x: number; y: number; size: number };
 
 export class Renderer {
-  private ctx: CanvasRenderingContext2D;
-  private doc: Document;
-
   private mode: RendererMode = "draw";
 
-  constructor(ctx: CanvasRenderingContext2D, doc: Document) {
-    this.ctx = ctx;
-    this.doc = doc;
-  }
+  constructor(
+    private ctx: CanvasRenderingContext2D,
+    private doc: Document,
+    private history: History
+  ) {}
 
   setMode(mode: RendererMode) {
     this.mode = mode;
@@ -21,7 +20,9 @@ export class Renderer {
   }
 
   beginStroke(color: string, size: number, x: number, y: number) {
-    this.doc.beginStroke(color, x, y, size);
+    const stroke = this.doc.beginStroke(color, x, y, size);
+
+    this.history.pushStroke(stroke);
 
     this.ctx.strokeStyle = color;
     this.ctx.fillStyle = color;
@@ -29,21 +30,16 @@ export class Renderer {
     this.drawDot(x, y, size);
   }
 
-  addPoint(x: number, y: number, size: number, smoothing = 0.3) {
-    const strokes = this.doc.getStrokes();
-    const stroke = strokes[strokes.length - 1];
+  addPoint(x: number, y: number, size: number) {
+    const stroke = this.doc.getCurrent();
     if (!stroke) return;
 
     const pts = stroke.points;
     const prev = pts[pts.length - 1];
 
-    const cx = prev.x + (x - prev.x) * smoothing;
-    const cy = prev.y + (y - prev.y) * smoothing;
-    const cs = prev.size + (size - prev.size) * smoothing;
+    const p = { x, y, size };
+    pts.push(p);
 
-    const p = { x: cx, y: cy, size: cs };
-
-    this.doc.addPoint(cx, cy, cs);
     this.drawSegment(prev, p);
   }
 
@@ -52,12 +48,19 @@ export class Renderer {
   }
 
   clear() {
+    this.history.clear();
     this.doc.clear();
+
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
   }
 
   undo() {
-    this.doc.undo();
+    this.history.undo(this.doc);
+    this.redraw();
+  }
+
+  redo() {
+    this.history.redo(this.doc);
     this.redraw();
   }
 

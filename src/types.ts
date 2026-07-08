@@ -57,3 +57,8 @@ export type DocStroke = {
   color: string;
   points: DocPoint[];
 };
+
+export interface HistoryCommand {
+  execute(doc: Document): void;
+  undo(doc: Document): void;
+}

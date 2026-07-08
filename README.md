@@ -37,8 +37,8 @@ It handles drawing logic, input processing, history management, and tool executi
 - [x] purrlet.registerTool(toolObject) - adds a tool to the registery
 - [x] purrlet.unregisterTool(id) - unregisters a tool
 - [x] purrlet.listTools() - returns a list of all the tools registered
-- [ ] purrlet.undo() - undo an action
-- [ ] purrlet.redo() - redo a recently undone action
+- [x] purrlet.undo() - undo an action
+- [x] purrlet.redo() - redo a recently undone action
 - [ ] purrlet.clearHistory() - clear history without clearing canvas
 - [ ] purrlet.export() - custom uploader function, **gets a blob of the canvas**
 - [ ] purrlet.upload() - **DEPRECATED**, alias of export(), simply to try and prevent breaking code

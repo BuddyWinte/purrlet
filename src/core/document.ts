@@ -1,25 +1,25 @@
-import type { DocPoint, DocStroke } from "../types";
+import type { DocStroke } from "../types";
 
 export class Document {
   private strokes: DocStroke[] = [];
   private current: DocStroke | null = null;
 
   beginStroke(color: string, x: number, y: number, size: number) {
-    this.current = {
+    const stroke: DocStroke = {
       id: crypto.randomUUID(),
       color,
-      points: [{ x, y, size }],
+      points: [{ x, y, size }]
     };
 
-    this.strokes.push(this.current);
-    return this.current;
+    this.current = stroke;
+    this.strokes.push(stroke);
+
+    return stroke;
   }
 
   addPoint(x: number, y: number, size: number) {
     if (!this.current) return;
-
     this.current.points.push({ x, y, size });
-    return this.current;
   }
 
   endStroke() {
@@ -30,12 +30,16 @@ export class Document {
     return this.strokes;
   }
 
+  getCurrent() {
+    return this.current;
+  }
+
   clear() {
     this.strokes = [];
     this.current = null;
   }
 
-  undo() {
+  removeLastStroke() {
     this.strokes.pop();
   }
 }
