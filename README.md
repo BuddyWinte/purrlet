@@ -24,29 +24,6 @@ Purrlet is a headless canvas drawing engine.
 It handles drawing logic, input processing, history management, and tool execution while leaving the interface entirely up to you.
 > **You build the UI. Purrlet handles the logic.**
 
-## Planned API:
-- ~~[ ] purrlet.attach(canvas) - reattaches purrlet to a different canvas without recreating the instance~~ V1.1
-- ~~[ ] purrlet.detach() - stops listening to inputs and disconnects from the canvas~~ - V1.1
-- [x] purrlet.render() - forces a redraw of the entire scene from internal state
-- ~~[ ] purrlet.resize(width,height) - changes canvas buffer size, but does not scale content~~ decided i wont do
-- [x] purrlet.clear(boolean) - clears the canvas (trash basically), boolean is for weather or not to omit it into history
-- [x] purrlet.setTool(tool) - takes in a tool id (must be registered through the registerTool)
-- [x] purrlet.updateToolConfig(tool, config) - updates a tool config without having to reset the instance
-- [x] purrlet.getTool() - returns the current tool object
-- [x] purrlet.getToolById() - returns a tool object from its ID
-- [x] purrlet.registerTool(toolObject) - adds a tool to the registery
-- [x] purrlet.unregisterTool(id) - unregisters a tool
-- [x] purrlet.listTools() - returns a list of all the tools registered
-- [x] purrlet.undo() - undo an action
-- [x] purrlet.redo() - redo a recently undone action
-- [x] purrlet.clearHistory() - clear history without clearing canvas
-- ~~[ ] purrlet.export() - custom uploader function, **gets a blob of the canvas**~~
-- ~~[ ] purrlet.upload() - **DEPRECATED**, alias of export(), simply to try and prevent breaking code~~ REMOVED as it's deprecated
-- **[ ] purrlet.toBlob
-
-**Supported Third-Party Providers:**
-- (https://catbox.moe/)[Catbox]
-
 ## Save Methods:
 > [!IMPORTANT]
 > The legacy `data-url` save format has been removed. Attempting to use it will result in an "Unknown save type" error.
