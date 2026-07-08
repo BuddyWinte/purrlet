@@ -147,6 +147,10 @@ export class Purrlet {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
+  render() {
+    this.renderer.redraw();
+  }
+
   private getContext(canvas: HTMLCanvasElement) {
     const ctx = canvas.getContext("2d");
 

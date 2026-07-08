@@ -27,8 +27,8 @@ It handles drawing logic, input processing, history management, and tool executi
 ## Planned API:
 - ~~[ ] purrlet.attach(canvas) - reattaches purrlet to a different canvas without recreating the instance~~ V1.1
 - ~~[ ] purrlet.detach() - stops listening to inputs and disconnects from the canvas~~ - V1.1
-- [ ] purrlet.render() - forces a redraw of the entire scene from internal state
-- [ ] purrlet.resize(width,height) - changes canvas buffer size, but does not scale content
+- [x] purrlet.render() - forces a redraw of the entire scene from internal state
+- ~~[ ] purrlet.resize(width,height) - changes canvas buffer size, but does not scale content~~ decided i wont do
 - [x] purrlet.clear(boolean) - clears the canvas (trash basically), boolean is for weather or not to omit it into history
 - [x] purrlet.setTool(tool) - takes in a tool id (must be registered through the registerTool)
 - [x] purrlet.updateToolConfig(tool, config) - updates a tool config without having to reset the instance
