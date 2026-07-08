@@ -64,6 +64,10 @@ export class Renderer {
     this.redraw();
   }
 
+  clearHistory() {
+    this.history.clear();
+  }
+
   redraw() {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.ctx.globalCompositeOperation = "source-over";

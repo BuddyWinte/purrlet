@@ -39,13 +39,13 @@ It handles drawing logic, input processing, history management, and tool executi
 - [x] purrlet.listTools() - returns a list of all the tools registered
 - [x] purrlet.undo() - undo an action
 - [x] purrlet.redo() - redo a recently undone action
-- [ ] purrlet.clearHistory() - clear history without clearing canvas
-- [ ] purrlet.export() - custom uploader function, **gets a blob of the canvas**
-- [ ] purrlet.upload() - **DEPRECATED**, alias of export(), simply to try and prevent breaking code
+- [x] purrlet.clearHistory() - clear history without clearing canvas
+- ~~[ ] purrlet.export() - custom uploader function, **gets a blob of the canvas**~~
+- ~~[ ] purrlet.upload() - **DEPRECATED**, alias of export(), simply to try and prevent breaking code~~ REMOVED as it's deprecated
+- **[ ] purrlet.toBlob
 
-**events**:
-- [ ] purrlet.on(event,data)
-- [ ] purrlet.emit() - **INTERNAL ONLY**, emit events
+**Supported Third-Party Providers:**
+- (https://catbox.moe/)[Catbox]
 
 ## Save Methods:
 > [!IMPORTANT]

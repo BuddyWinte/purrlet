@@ -14,6 +14,12 @@ import { Renderer } from "./renderer";
 import { eraserTool } from "../tools/eraser";
 import { Document } from "./document";
 import { History } from "./history";
+import {
+  canvasToBlob,
+  canvasToDataURL,
+  exportCanvas,
+  type ExportOptions,
+} from "./export";
 
 export class Purrlet {
   private config: PurrletConfig;
@@ -40,7 +46,6 @@ export class Purrlet {
     const history = new History();
     this.renderer = new Renderer(this.ctx, doc, history);
 
-
     this.bindPointerEvents();
 
     this.registerTool(brushTool);
@@ -52,6 +57,8 @@ export class Purrlet {
       this.setTool("brush");
     }
   }
+
+  readonly version = "2.0";
 
   private bindPointerEvents() {
     bindPointer(this.canvas, {
@@ -149,6 +156,22 @@ export class Purrlet {
 
   render() {
     this.renderer.redraw();
+  }
+
+  clearHistory() {
+    this.renderer.clearHistory();
+  }
+
+  async toBlob(type = "image/png", quality?: number) {
+    return canvasToBlob(this.canvas, type, quality);
+  }
+
+  toDataURL(type = "image/png", quality?: number) {
+    return canvasToDataURL(this.canvas, type, quality);
+  }
+
+  async export(options: ExportOptions) {
+    return exportCanvas(this.canvas, options);
   }
 
   private getContext(canvas: HTMLCanvasElement) {
