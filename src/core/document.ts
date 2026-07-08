@@ -8,7 +8,7 @@ export class Document {
     const stroke: DocStroke = {
       id: crypto.randomUUID(),
       color,
-      points: [{ x, y, size }]
+      points: [{ x, y, size }],
     };
 
     this.current = stroke;
@@ -41,5 +41,22 @@ export class Document {
 
   removeLastStroke() {
     this.strokes.pop();
+  }
+
+  _addStroke(stroke: DocStroke) {
+    this.strokes.push(stroke);
+  }
+
+  _removeStrokeById(id: string) {
+    this.strokes = this.strokes.filter((s) => s.id !== id);
+
+    if (this.current?.id === id) {
+      this.current = null;
+    }
+  }
+
+  _clear() {
+    this.strokes = [];
+    this.current = null;
   }
 }
