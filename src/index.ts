@@ -3,8 +3,8 @@
  *
  * Created by BuddyWinte and pawsome contributors
  * https://github.com/BuddyWinte/Purrlet
- * 
- * License: MIT
+ *
+ * License: PolyForm Noncommercial License 1.0.0
  */
 
 export { Purrlet } from "./core/purrlet";
