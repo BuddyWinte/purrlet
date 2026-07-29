@@ -1,11 +1,9 @@
 # Purrlet
-<img src="https://img.shields.io/github/v/release/buddywinte/purrlet" />
-<a href="https://discord.gg/Ruk58PhJvm">
-    <img src="https://img.shields.io/discord/1375986160995930132?style=plastic&logo=discord&label=Discord" />
-</a>
-<img src="https://img.shields.io/npm/v/purrlet" />
-<img src="https://img.shields.io/npm/dm/purrlet" />
-<img src="https://img.shields.io/npm/dt/purrlet" />
+![GitHub Release](https://img.shields.io/github/v/release/buddywinte/purrlet)
+[![Discord](https://img.shields.io/discord/1375986160995930132?style=plastic&logo=discord&label=Discord)](https://discord.gg/Ruk58PhJvm)
+![NPM Version](https://img.shields.io/npm/v/purrlet)
+![Downloads](https://img.shields.io/npm/dm/purrlet)
+![Total Downloads](https://img.shields.io/npm/dt/purrlet)
 
 A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
 
