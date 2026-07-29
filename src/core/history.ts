@@ -1,3 +1,13 @@
+/**
+ * Purrlet v2.0.0
+ *
+ * Please read the CONTRIBUTING.md file for our standards on code style and contribution. (such as JSDoc, TypeScript, etc. everywhere)
+ * @author BuddyWinte
+ * @since v0.9.0
+ * @version v2.0.0
+ */
+"use strict";
+
 import { Document } from "./document";
 import type { DocStroke } from "../types";
 

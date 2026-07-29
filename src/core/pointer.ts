@@ -1,3 +1,13 @@
+/**
+ * Purrlet v2.0.0
+ *
+ * Please read the CONTRIBUTING.md file for our standards on code style and contribution. (such as JSDoc, TypeScript, etc. everywhere)
+ * @author BuddyWinte
+ * @since v0.9.0
+ * @version v2.0.0
+ */
+"use strict";
+
 import { PurrletPointer } from "../types";
 
 export function bindPointer(
@@ -21,7 +31,7 @@ export function bindPointer(
             isDown: e.buttons > 0,
         };
     };
-    
+
     canvas.addEventListener("pointerdown", (e) => {
         canvas.setPointerCapture(e.pointerId);
         handlers.down(getPoint(e), e);
