@@ -1,8 +1,17 @@
 # Purrlet
+<p align="center">
+  <img src="https://img.shields.io/github/v/release/buddywinte/purrlet" />
+  <a href="https://discord.gg/Ruk58PhJvm">
+    <img src="https://img.shields.io/discord/1375986160995930132?style=plastic&logo=discord&label=Discord" />
+  </a>
+  <img src="https://img.shields.io/npm/v/purrlet" />
+  <img src="https://img.shields.io/npm/dm/purrlet" />
+  <img src="https://img.shields.io/npm/dt/purrlet" />
+</p>
 
 A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
 > [!IMPORTANT]
-> Purrlet v2 is currently in early beta and is not recommended for production use.
+> Purrlet v2 is in a much more stable state than v1, and is very unlikely to change.
 
 > [!IMPORTANT]
 > **Upgrading from v1?** The API has been extensively redesigned. Be sure to review the new documentation before migrating, as many concepts and interfaces have changed.
