@@ -3,17 +3,30 @@
   "version": "2.0.0",
   "description": "A lightweight headless canvas drawing engine for building interactive drawing tools and websites. meow",
   "type": "module",
-  "main": "./dist/purrlet.cjs.js",
-  "module": "./dist/purrlet.esm.js",
   "types": "./dist/index.d.ts",
   "exports": {
-      ".": {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/purrlet.esm.js",
-        "require": "./dist/purrlet.cjs.js",
-        "default": "./dist/purrlet.esm.js"
-      }
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/purrlet.mjs",
+      "default": "./dist/purrlet.mjs"
+    }
+  },
+  "contributors": [
+    {
+      "name": "Bang1338",
+      "url": "https://github.com/Bang1338"
     },
+    {
+      "name": "spacebxr",
+      "url": "https://spacebxr.pages.dev/",
+      "email": "spacebxr112@gmail.com"
+    },
+    {
+      "name": "BuddyWinte",
+      "url": "https://buddywinte.xyz/",
+      "email": "buddywinte@gmail.com"
+    }
+  ],
   "files": [
     "dist"
   ],
@@ -34,8 +47,8 @@
   ],
   "sideEffects": false,
   "author": "BuddyWinte",
-  "license": "MIT",
-  "homepage": "https://github.com/BuddyWinte/Purrlet#readme",
+  "license": "Polyform-Noncommercial-1.0.0",
+  "homepage": "https://github.com/BuddyWinte/Purrlet",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/BuddyWinte/Purrlet.git"
