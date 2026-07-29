@@ -1,3 +1,16 @@
+/**
+ * Purrlet v2.0.0
+ *
+ * Please read the CONTRIBUTING.md file for our standards on code style and contribution.
+ *
+ * @author BuddyWinte (@buddywinte)
+ * @contributors
+ * - BuddyWinte (@buddywinte) - Initial implementation
+ *
+ * @since v0.9.0
+ */
+"use strict";
+
 import type { Tool, ToolInstance, PurrletPointer } from "../types";
 import type { Renderer } from "../core/renderer";
 
