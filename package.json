@@ -3,13 +3,19 @@
   "version": "2.0.0",
   "description": "A lightweight headless canvas drawing engine for building interactive drawing tools and websites. meow",
   "type": "module",
-  "main": "./dist/purrlet.mjs",
-  "module": "./dist/purrlet.mjs",
+  "main": "./dist/purrlet.cjs.js",
+  "module": "./dist/purrlet.esm.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "import": "./dist/purrlet.esm.js",
+        "require": "./dist/purrlet.cjs.js",
+        "default": "./dist/purrlet.esm.js"
+      }
+    },
   "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
+    "dist"
   ],
   "engines": {
     "node": ">=18"
