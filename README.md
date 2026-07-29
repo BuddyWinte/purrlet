@@ -10,14 +10,12 @@
 </p>
 
 A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
-> [!IMPORTANT]
-> Purrlet v2 is in a much more stable state than v1, and is very unlikely to change.
 
 > [!IMPORTANT]
 > **Upgrading from v1?** The API has been extensively redesigned. Be sure to review the new documentation before migrating, as many concepts and interfaces have changed.
 
 > [!CAUTION]
-> Third-party uploaders are no longer bundled with the core package. If you're using the CDN build, see the CDN guide. If you're installing with npm, refer to the installation guide for supported uploader packages.
+> Third-party uploaders are currently not supported. v2.1 will introduce support for third-party uploaders. In the meantime, you can use the `export`, `dataURL`, or `blob` to upload your canvas to your own server. (or a public website, your choice) *If you want to help with the introduce of third-party uploaders, please consider contributing to the project.*
 
 ## Key Features
 - Pawesomely lightweight, dependency-free drawing engine
