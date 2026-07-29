@@ -1,13 +1,11 @@
 # Purrlet
-<p align="center">
-  <img src="https://img.shields.io/github/v/release/buddywinte/purrlet" />
-  <a href="https://discord.gg/Ruk58PhJvm">
+<img src="https://img.shields.io/github/v/release/buddywinte/purrlet" />
+<a href="https://discord.gg/Ruk58PhJvm">
     <img src="https://img.shields.io/discord/1375986160995930132?style=plastic&logo=discord&label=Discord" />
-  </a>
-  <img src="https://img.shields.io/npm/v/purrlet" />
-  <img src="https://img.shields.io/npm/dm/purrlet" />
-  <img src="https://img.shields.io/npm/dt/purrlet" />
-</p>
+</a>
+<img src="https://img.shields.io/npm/v/purrlet" />
+<img src="https://img.shields.io/npm/dm/purrlet" />
+<img src="https://img.shields.io/npm/dt/purrlet" />
 
 A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
 
@@ -37,7 +35,7 @@ npm install purrlet
 ### CDN
 ```html
 <script type="module">
-  import { Purrlet } from 'https://unpkg.com/purrlet/dist/purrlet.mjs';
+  import { Purrlet } from 'https://cdn.jsdelivr.net/npm/purrlet/dist/purrlet.mjs';
 
   const purrlet = new Purrlet({
     canvas: document.getElementById('canvas')
