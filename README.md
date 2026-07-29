@@ -15,8 +15,8 @@ A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
 - Lorem Impsum
 
 ## License
-Purrlet is licensed under the MIT License. See the [LICENSE](./LICENSE) for full license text.
-> A short and simple permissive license with conditions only requiring preservation of copyright and license notices. Licensed works, modifications, and larger works may be distributed under different terms and without source code.
+Purrlet is licensed under the *PolyForm Noncommercial License 1.0.0* License. See the [LICENSE](./LICENSE) for full license text.
+> Commerical usage requires a seperate license that will be granted by BuddyWinte. Please contact me directly for more information.
 
 ## What is **Purrlet**?
 Purrlet is a headless canvas drawing engine.
@@ -27,5 +27,5 @@ It handles drawing logic, input processing, history management, and tool executi
 ## Save Methods:
 > [!IMPORTANT]
 > The legacy `data-url` save format has been removed. Attempting to use it will result in an "Unknown save type" error.
-`commands`: stores deterministic drawing actions (tool inputs + state changes); can be serialized to localStorage, IndexedDB, etc. **DEFAULT**
-`blob`: stores a raster snapshot of the current canvas state; does not preserve tool history or editability **NOT RECOMMENDED**
+- `commands`: stores deterministic drawing actions (tool inputs + state changes); can be serialized to localStorage, IndexedDB, etc. **DEFAULT**
+- `blob`: stores a raster snapshot of the current canvas state; does not preserve tool history or editability **NOT RECOMMENDED**
