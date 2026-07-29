@@ -65,6 +65,8 @@ export class Purrlet {
     } else {
       this.setTool("brush");
     }
+
+    window.addEventListener("resize", this.resize)
   }
 
   /**
@@ -95,6 +97,15 @@ export class Purrlet {
         this.currentTool?.onPointerUp?.(p, this.renderer);
       },
     });
+  }
+
+  /**
+   * Resizes the canvas and renderer to the css size of the canvas. Ran automatically on screen resize.
+   *
+   * @returns void
+   */
+  resize() {
+    this.renderer.resize();
   }
 
   /**

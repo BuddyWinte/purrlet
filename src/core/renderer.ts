@@ -51,6 +51,20 @@ export class Renderer {
   }
 
   /**
+   * Resizes the canvas to match the css size
+   */
+  resize(): void {
+    const rect = this.ctx.canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+
+    this.ctx.canvas.width = rect.width * dpr;
+    this.ctx.canvas.height = rect.height * dpr;
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    this.redraw();
+  }
+
+  /**
    * Begins a new stroke with the given color, size, and starting point.
    *
    * @param color - The color of the stroke.
