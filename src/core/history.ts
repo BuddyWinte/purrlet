@@ -1,33 +1,87 @@
-// This function is incharge of the history keeper, .redo, .undo
+/**
+ * Purrlet v2.0.0
+ *
+ * Please read the CONTRIBUTING.md file for our standards on code style and contribution. (such as JSDoc, TypeScript, etc. everywhere)
+ * @author BuddyWinte
+ * @since v0.9.0
+ * @version v2.0.0
+ */
+"use strict";
 
-export function createHistory(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
-  let undoSnapshots: ImageData[] = [];
-  let redoSnapshots: ImageData[] = [];
+import { Document } from "./document";
+import type { DocStroke } from "../types";
 
-  function saveState() {
-    const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    undoSnapshots.push(image);
-    redoSnapshots = [];
+type Command = {
+  do: (doc: Document) => void;
+  undo: (doc: Document) => void;
+};
+
+export class History {
+  private undoStack: Command[] = [];
+  private redoStack: Command[] = [];
+
+  pushStroke(stroke: DocStroke) {
+    const command: Command = {
+      do: (doc) => {
+        doc._addStroke?.(stroke);
+      },
+      undo: (doc) => {
+        doc._removeStrokeById?.(stroke.id);
+      }
+    };
+
+    this.undoStack.push(command);
+    this.redoStack.length = 0;
   }
-  function undo() {
-    if (undoSnapshots.length === 0) return;
-    const current = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    redoSnapshots.push(current);
-    const prev = undoSnapshots.pop()!;
-    ctx.putImageData(prev, 0, 0);
+
+  pushClear(previous: DocStroke[]) {
+    const snapshot = [...previous];
+
+    const command: Command = {
+      do: (doc) => {
+        doc._clear?.();
+      },
+      undo: (doc) => {
+        for (const s of snapshot) {
+          doc._addStroke?.(s);
+        }
+      }
+    };
+
+    this.undoStack.push(command);
+    this.redoStack.length = 0;
   }
 
-  function redo() {
-    if (redoSnapshots.length === 0) return;
-    const current = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    undoSnapshots.push(current);
-    const next = redoSnapshots.pop()!;
-    ctx.putImageData(next, 0, 0);
+  undo(doc: Document) {
+    const cmd = this.undoStack.pop();
+    if (!cmd) return false;
+
+    cmd.undo(doc);
+    this.redoStack.push(cmd);
+
+    return true;
   }
 
-  return {
-    saveState,
-    undo,
-    redo,
-  };
+  redo(doc: Document) {
+    const cmd = this.redoStack.pop();
+    if (!cmd) return false;
+
+    cmd.do(doc);
+    this.undoStack.push(cmd);
+
+    return true;
+  }
+
+  clear() {
+    this.undoStack.length = 0;
+    this.redoStack.length = 0;
+  }
+
+  canUndo() {
+    return this.undoStack.length > 0;
+  }
+
+  canRedo() {
+    return this.redoStack.length > 0;
+  }
 }

@@ -1,34 +1,60 @@
-import { defineTool } from "./defineTool";
-import type { ToolInstance } from "./types";
+/**
+ * Purrlet v2.0.0
+ *
+ * Please read the CONTRIBUTING.md file for our standards on code style and contribution.
+ *
+ * @author BuddyWinte (@buddywinte)
+ * @contributors
+ * - BuddyWinte (@buddywinte) - Initial implementation
+ *
+ * @since v0.9.0
+ */
+"use strict";
 
-type BrushToolConfig = {
+import type { Tool, ToolInstance, PurrletPointer } from "../types";
+import type { Renderer } from "../core/renderer";
+
+type BrushConfig = {
   color?: string;
   size?: number;
+  smoothing?: number;
+  pressureEnabled?: boolean;
+  pressureMinSizeFactor?: number;
 };
 
-export const brushTool = defineTool({
+export const brushTool: Tool<BrushConfig> = {
   name: "brush",
 
-  create(config: BrushToolConfig = {}): ToolInstance {
+  create(config: BrushConfig = {}): ToolInstance {
+    let drawing = false;
+
+    const color = config.color ?? "#000";
+    const baseSize = config.size ?? 5;
+    const pressureEnabled = config.pressureEnabled ?? true;
+    const minFactor = config.pressureMinSizeFactor ?? 0.2;
+
+    const sizeFor = (p: PurrletPointer) => {
+      if (!pressureEnabled || p.pointerType !== "pen") return baseSize;
+      const pressure = Math.max(0.05, p.pressure);
+      return baseSize * (minFactor + pressure * (1 - minFactor));
+    };
+
     return {
-      onDown(p, { ctx }) {
-        ctx.strokeStyle = config.color ?? "#000";
-        ctx.lineWidth = config.size ?? 5;
-        ctx.lineCap = "round";
-        ctx.lineJoin = "round";
-
-        ctx.beginPath();
-        ctx.moveTo(p.x, p.y);
+      onPointerDown(p, r: Renderer) {
+        drawing = true;
+        const size = sizeFor(p);
+        r.beginStroke(color, size, p.x, p.y);
       },
 
-      onMove(p, { ctx }) {
-        if (!p.isDown) return;
-
-        ctx.lineTo(p.x, p.y);
-        ctx.stroke();
+      onPointerMove(p, r: Renderer) {
+        if (!drawing || !p.isDown) return;
+        r.addPoint(p.x, p.y, sizeFor(p));
       },
 
-      onUp() {},
+      onPointerUp(_, r: Renderer) {
+        drawing = false;
+        r.endStroke();
+      },
     };
   },
-});
+};

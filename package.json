@@ -1,116 +1,67 @@
 {
   "name": "purrlet",
-  "version": "1.1.0",
-  "description": "A lightweight headless drawbox-style canvas engine for indie sites and creative side projects. simple, fast, flexible.",
+  "version": "2.0.0",
+  "description": "A lightweight headless canvas drawing engine for building interactive drawing tools and websites. meow",
   "type": "module",
   "main": "./dist/purrlet.mjs",
-  "module": "./dist/purrlet.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/purrlet.mjs",
       "default": "./dist/purrlet.mjs"
-    },
-    "./react": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./next": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./vue": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./nuxt": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./svelte": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./sveltekit": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./astro": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./solid": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./solidstart": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./qwik": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./remix": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/purrlet.mjs",
-      "default": "./dist/purrlet.mjs"
-    },
-    "./package.json": "./package.json"
+    }
   },
+  "contributors": [
+    {
+      "name": "Bang1338",
+      "url": "https://github.com/Bang1338"
+    },
+    {
+      "name": "spacebxr",
+      "url": "https://spacebxr.pages.dev/",
+      "email": "spacebxr112@gmail.com"
+    },
+    {
+      "name": "BuddyWinte",
+      "url": "https://buddywinte.xyz/",
+      "email": "buddywinte@gmail.com"
+    }
+  ],
   "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
+    "dist"
   ],
   "engines": {
     "node": ">=18"
   },
   "scripts": {
-    "tool:new": "node ./scripts/create-tool.mjs",
     "clean": "rm -rf dist",
     "dev": "rollup -c --watch",
     "build": "rollup -c",
-    "test": "npm run build && node --test || echo \"No tests found\"",
-    "prepublishOnly": "npm run build",
+    "test": "bun run build && bun test || echo \"No tests found\"",
+    "prepublishOnly": "bun run build",
     "lint": "eslint ."
   },
   "keywords": [
-    "canvas",
-    "drawing",
     "drawbox",
-    "image-editor",
-    "upload",
-    "upload-sdk",
-    "imgbb",
-    "imgur",
-    "cloudinary",
-    "javascript",
-    "library",
-    "headless",
-    "graphics",
-    "indie-dev",
-    "side-project",
-    "creator-tools"
+    "drawing"
   ],
+  "sideEffects": false,
   "author": "BuddyWinte",
-  "license": "MIT",
-  "homepage": "https://github.com/BuddyWinte/Purrlet#readme",
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "homepage": "https://github.com/BuddyWinte/Purrlet",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/BuddyWinte/Purrlet.git"
+    "url": "https://github.com/BuddyWinte/Purrlet.git"
   },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/index.d.ts"
+      ]
+    }
+  },
+  "packageManager": "bun@1.3.14",
   "bugs": {
     "url": "https://github.com/BuddyWinte/Purrlet/issues"
   },
@@ -125,9 +76,10 @@
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-terser": "^1.0.0",
     "@rollup/plugin-typescript": "^12.3.0",
-    "eslint": "^9.0.0",
+    "eslint": "^10.8.0",
     "prettier": "^3.8.1",
     "rollup": "^4.57.1",
+    "rollup-plugin-dts": "^6.4.1",
     "typescript": "^6.0.3"
   },
   "dependencies": {

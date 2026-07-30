@@ -1,23 +1,48 @@
-export function bindPointer(
-  canvas: HTMLCanvasElement,
-  handlers: {
-    down: (p: any) => void;
-    move: (p: any) => void;
-    up: (p: any) => void;
-  }
-) {
-  const pos = (e: PointerEvent) => {
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / (rect.width || 1);
-    const scaleY = canvas.height / (rect.height || 1);
-    return {
-      x: (e.clientX - rect.left) * scaleX,
-      y: (e.clientY - rect.top) * scaleY,
-      isDown: e.buttons > 0,
-    };
-  };
+/**
+ * Purrlet v2.0.0
+ *
+ * Please read the CONTRIBUTING.md file for our standards on code style and contribution. (such as JSDoc, TypeScript, etc. everywhere)
+ * @author BuddyWinte
+ * @since v0.9.0
+ * @version v2.0.0
+ */
+"use strict";
 
-  canvas.addEventListener("pointerdown", (e) => handlers.down(pos(e)));
-  canvas.addEventListener("pointermove", (e) => handlers.move(pos(e)));
-  canvas.addEventListener("pointerup", (e) => handlers.up(pos(e)));
+import { PurrletPointer } from "../types";
+
+export function bindPointer(
+    canvas: HTMLCanvasElement,
+    handlers: {
+        down: (p: PurrletPointer, e: PointerEvent) => void;
+        move: (p: PurrletPointer, e: PointerEvent) => void;
+        up: (p: PurrletPointer, e: PointerEvent) => void;
+    }
+) {
+    const getPoint = (e: PointerEvent): PurrletPointer => {
+        const rect = canvas.getBoundingClientRect();
+        return {
+            x: (e.clientX - rect.left),
+            y: (e.clientY - rect.top),
+            pressure: e.pressure ?? 0,
+            tiltX: e.tiltX ?? 0,
+            tiltY: e.tiltY ?? 0,
+            pointerType: e.pointerType as any,
+            pointerId: e.pointerId,
+            isDown: e.buttons > 0,
+        };
+    };
+
+    canvas.addEventListener("pointerdown", (e) => {
+        canvas.setPointerCapture(e.pointerId);
+        handlers.down(getPoint(e), e);
+    });
+
+    canvas.addEventListener("pointermove", (e) => {
+        handlers.move(getPoint(e), e);
+    });
+
+    canvas.addEventListener("pointerup", (e) => {
+        handlers.up(getPoint(e), e);
+        canvas.releasePointerCapture(e.pointerId);
+    });
 }
