@@ -38,8 +38,8 @@
     "clean": "rm -rf dist",
     "dev": "rollup -c --watch",
     "build": "rollup -c",
-    "test": "bun run build && bun test || echo \"No tests found\"",
-    "prepublishOnly": "bun run build",
+    "test": "npm run build && npm test || echo \"No tests found\"",
+    "prepublishOnly": "npm run build",
     "lint": "eslint ."
   },
   "keywords": [
