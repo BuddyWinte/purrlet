@@ -18,8 +18,8 @@ A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
 - headless (no UIs are included, build your own!)
 
 <p align="center">
-/\_/\
-( o.o )
+/\_/\<br>
+( o.o )<br>
 > ^ <
 </p>
 
