@@ -7,12 +7,6 @@
 
 A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
 
-> [!IMPORTANT]
-> **Upgrading from v1?** The API has been extensively redesigned. Be sure to review the new documentation before migrating, as many concepts and interfaces have changed.
-
-> [!CAUTION]
-> Third-party uploaders are currently not supported. v2.1 will introduce support for third-party uploaders. In the meantime, you can use the `export`, `dataURL`, or `blob` to upload your canvas to your own server. (or a public website, your choice) *If you want to help with the introduce of third-party uploaders, please consider contributing to the project.*
-
 ## Key Features
 - Pawesomely lightweight, dependency-free drawing engine
 - typescript-first
@@ -21,7 +15,11 @@ A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
 - Framework agnostic
 - undo/redo support
 - custom tool support
-- headless (build your own UI)!
+- headless (no UIs are included, build your own!)
+
+/\_/\
+( o.o )
+\> ^ <
 
 ## Installation
 
