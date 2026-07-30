@@ -17,9 +17,11 @@ A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
 - custom tool support
 - headless (no UIs are included, build your own!)
 
+<p align="center">
 /\_/\
 ( o.o )
-\> ^ <
+> ^ <
+</p>
 
 ## Installation
 
