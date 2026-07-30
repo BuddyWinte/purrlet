@@ -10,6 +10,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/purrlet.mjs",
       "default": "./dist/purrlet.mjs"
+    },
+    "./providers": {
+      "types": "./dist/providers.d.ts",
+      "import": "./dist/providers.mjs",
+      "default": "./dist/providers.mjs"
     }
   },
   "contributors": [

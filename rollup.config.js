@@ -14,13 +14,18 @@ const banner = `/*!
 
 export default [
   {
-    input: "src/index.ts",
+    input: {
+      purrlet: "src/index.ts",
+      providers: "src/providers/index.ts",
+    },
 
     output: {
-      file: "dist/purrlet.mjs",
+      dir: "dist",
       format: "es",
       sourcemap: true,
       banner,
+      exports: "named",
+      entryFileNames: "[name].mjs",
     },
 
     plugins: [
