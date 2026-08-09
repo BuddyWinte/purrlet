@@ -26,6 +26,13 @@ A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
 ## Installation
 
 ### npm
+
+#### bun
+```bash
+bun add purrlet
+```
+
+#### npm
 ```bash
 npm install purrlet
 ```
@@ -99,8 +106,27 @@ purrlet.undo();
 purrlet.redo();
 purrlet.clearHistory();
 ```
-> [!NOTE]
-> At this current stage, `purrlet.clear()` and `purrlet.redraw()` are counted as history entries. This can cause weird artifacts. If you know how to fix this, please make a pull request.
+
+## Providers
+Purrlet supports a ton of third-party providers for uploading your canvas. These providers are not included with the core library, and must be added separately.
+> We do not own any of these providers, and are not responsible for any issues that may arise from using them. The provider part of Purrlet is primarily a helper to make your development experience easier.
+If you are interested in adding a provider, please open a pull request and we will be happy to review it!
+
+### Catbox
+```js
+import { Catbox } from "purrlet/providers";
+import { purrlet } from "Purrlet";
+
+const purrlet = new Purrlet({
+  canvas
+});
+```
+
+Whenever your "submit" or "finish" button is clicked you can do the following inside the event listener:
+```js
+const { url } = await Catbox(await purrlet.blob());
+```
+> The `url` variable will contain a URL to the uploaded resource, it is always provided. *Depending on the provider*, a deleteUrl may also be included for deleting the uploaded resource.
 
 ## License
 Purrlet is licensed under the PolyForm Noncommercial License 1.0.0 License.
