@@ -45,18 +45,12 @@ export class Purrlet {
   constructor(config: PurrletConfig) {
     this.config = config;
     this.canvas = config.canvas;
-    const pixelRatio = typeof window !== "undefined" ? window.devicePixelRatio : 1;
-
-    const rect = this.canvas.getBoundingClientRect();
-    this.canvas.width = rect.width * pixelRatio;
-    this.canvas.height = rect.height * pixelRatio;
-
     this.ctx = this.getContext(this.canvas);
-    this.ctx.scale(devicePixelRatio, devicePixelRatio);
 
     const doc = new Document();
     const history = new History();
     this.renderer = new Renderer(this.ctx, doc, history);
+    this.renderer.resize();
 
     this.bindPointerEvents();
 

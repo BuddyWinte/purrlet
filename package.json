@@ -10,11 +10,6 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/purrlet.mjs",
       "default": "./dist/purrlet.mjs"
-    },
-    "./providers": {
-      "types": "./dist/providers.d.ts",
-      "import": "./dist/providers.mjs",
-      "default": "./dist/providers.mjs"
     }
   },
   "files": [
@@ -27,8 +22,8 @@
     "clean": "rm -rf dist",
     "dev": "rollup -c --watch",
     "build": "rollup -c",
-    "test": "npm run build && npm test || echo \"No tests found\"",
-    "prepublishOnly": "npm run build",
+    "test": "bun run build && bun test || echo \"No tests found\"",
+    "prepublishOnly": "bun run build",
     "lint": "eslint ."
   },
   "keywords": [
