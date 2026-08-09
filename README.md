@@ -9,12 +9,12 @@ A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
 
 ## Key Features
 - Pawesomely lightweight, dependency-free drawing engine
-- typescript-first
-- basically plug-and-play
+- Typescript-first
+- Basically plug-and-play
 - Desktop, mobile, web, drawing tablet support
 - Framework agnostic
 - undo/redo support
-- custom tool support
+- Custom tool support
 - headless (no UIs are included, build your own!)
 
 <p align="center">

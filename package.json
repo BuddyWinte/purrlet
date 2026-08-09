@@ -17,22 +17,6 @@
       "default": "./dist/providers.mjs"
     }
   },
-  "contributors": [
-    {
-      "name": "Bang1338",
-      "url": "https://github.com/Bang1338"
-    },
-    {
-      "name": "spacebxr",
-      "url": "https://spacebxr.pages.dev/",
-      "email": "spacebxr112@gmail.com"
-    },
-    {
-      "name": "BuddyWinte",
-      "url": "https://buddywinte.xyz/",
-      "email": "buddywinte@gmail.com"
-    }
-  ],
   "files": [
     "dist"
   ],
