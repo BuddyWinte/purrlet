@@ -1,9 +1,9 @@
- /**
-  * Purrlet
-  * A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
-  *
-  * Please read the CONTRIBUTING.md file before you contrbute.
-  */
+/**
+ * Purrlet
+ * A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
+ *
+ * Please read the CONTRIBUTING.md file before you contrbute.
+ */
 "use strict";
 
 import type { RendererMode } from "../types";
@@ -89,7 +89,7 @@ export class Renderer {
    * @public
    */
   beginStroke(color: string, size: number, x: number, y: number): void {
-    const stroke = this.doc.beginStroke(color, x, y, size);
+    const stroke = this.doc.beginStroke(color, x, y, size, this.mode);
 
     this.history.pushStroke(stroke);
 
@@ -178,15 +178,32 @@ export class Renderer {
    */
   redraw(): void {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-    this.ctx.globalCompositeOperation = "source-over";
+
     for (const stroke of this.doc.getStrokes()) {
+      this.ctx.globalCompositeOperation =
+        stroke.mode === "erase" ? "destination-out" : "source-over";
+
       this.ctx.strokeStyle = stroke.color;
+      this.ctx.fillStyle = stroke.color;
+
+      if (stroke.points.length === 1) {
+        const point = stroke.points[0];
+
+        this.ctx.beginPath();
+        this.ctx.arc(point.x, point.y, point.size / 2, 0, Math.PI * 2);
+        this.ctx.fill();
+
+        continue;
+      }
+
       for (let i = 1; i < stroke.points.length; i++) {
         const a = stroke.points[i - 1];
         const b = stroke.points[i];
+
         this.ctx.lineWidth = b.size;
         this.ctx.lineCap = "round";
         this.ctx.lineJoin = "round";
+
         this.ctx.beginPath();
         this.ctx.moveTo(a.x, a.y);
         this.ctx.lineTo(b.x, b.y);

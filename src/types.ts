@@ -42,6 +42,7 @@ export type Stroke = {
   id: string;
   color: string;
   points: StrokePoint[];
+  mode: RendererMode;
 };
 
 export type RendererMode = "draw" | "erase";
@@ -56,6 +57,7 @@ export type DocStroke = {
   id: string;
   color: string;
   points: DocPoint[];
+  mode: RendererMode
 };
 
 export interface HistoryCommand {

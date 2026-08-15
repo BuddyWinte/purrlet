@@ -14,10 +14,13 @@ import type {
   PurrletPointer,
 } from "../types";
 
-import { bindPointer } from "./pointer";
+// default tools
 import { brushTool } from "../tools/brush";
-import { Renderer } from "./renderer";
 import { eraserTool } from "../tools/eraser";
+import { lineTool } from "../tools/line";
+
+import { bindPointer } from "./pointer";
+import { Renderer } from "./renderer";
 import { Document } from "./document";
 import { History } from "./history";
 import {
@@ -51,6 +54,7 @@ export class Purrlet {
 
     this.registerTool(brushTool);
     this.registerTool(eraserTool);
+    this.registerTool(lineTool);
 
     if (config.defaultTool) {
       this.setTool(config.defaultTool);
@@ -58,7 +62,7 @@ export class Purrlet {
       this.setTool("brush");
     }
 
-    window.addEventListener("resize", this.resize)
+    window.addEventListener("resize", () => this.resize());
   }
 
   /**

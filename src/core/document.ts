@@ -1,21 +1,28 @@
- /**
-  * Purrlet
-  * A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
-  *
-  * Please read the CONTRIBUTING.md file before you contrbute.
-  */
+/**
+ * Purrlet
+ * A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
+ *
+ * Please read the CONTRIBUTING.md file before you contrbute.
+ */
 "use strict";
 
-import type { DocStroke } from "../types";
+import type { DocStroke, RendererMode } from "../types";
 
 export class Document {
   private strokes: DocStroke[] = [];
   private current: DocStroke | null = null;
 
-  beginStroke(color: string, x: number, y: number, size: number) {
+  beginStroke(
+    color: string,
+    x: number,
+    y: number,
+    size: number,
+    mode: RendererMode,
+  ) {
     const stroke: DocStroke = {
       id: crypto.randomUUID(),
       color,
+      mode,
       points: [{ x, y, size }],
     };
 
@@ -27,7 +34,12 @@ export class Document {
 
   addPoint(x: number, y: number, size: number) {
     if (!this.current) return;
-    this.current.points.push({ x, y, size });
+
+    this.current.points.push({
+      x,
+      y,
+      size,
+    });
   }
 
   endStroke() {
