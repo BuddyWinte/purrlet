@@ -67,7 +67,7 @@ export class Purrlet {
    * @readonly
    * @private
    */
-  readonly version = "2.0";
+  readonly version = "2.1";
 
   /**
    * Binds the pointer events to the canvas.
