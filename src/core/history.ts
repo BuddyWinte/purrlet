@@ -1,11 +1,9 @@
-/**
- * Purrlet v2.0.0
- *
- * Please read the CONTRIBUTING.md file for our standards on code style and contribution. (such as JSDoc, TypeScript, etc. everywhere)
- * @author BuddyWinte
- * @since v0.9.0
- * @version v2.0.0
- */
+ /**
+  * Purrlet
+  * A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
+  *
+  * Please read the CONTRIBUTING.md file before you contrbute.
+  */
 "use strict";
 
 import { Document } from "./document";

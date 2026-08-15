@@ -1,15 +1,10 @@
-/**
- * Purrlet v2.0.0
- *
- * Please read the CONTRIBUTING.md file for our standards on code style and contribution.
- *
- * @author BuddyWinte (@buddywinte)
- * @contributors
- * - BuddyWinte (@buddywinte) - Initial implementation
- *
- * @since v1.5.0
- * @see https://api.imgbb.com/
- */
+ /**
+  * Purrlet
+  * A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
+  *
+  * Please read the CONTRIBUTING.md file before you contrbute.
+  * @see https://api.imgbb.com/
+  */
 
  import { UploadResult } from "./types";
 

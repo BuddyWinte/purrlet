@@ -1,10 +1,9 @@
-/**
- * Purrlet
- *
- * @author BuddyWinte
- * @since v0.9.0
- * @version v2.0.0
- */
+ /**
+  * Purrlet
+  * A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
+  *
+  * Please read the CONTRIBUTING.md file before you contrbute.
+  */
 "use strict";
 
 import type { RendererMode } from "../types";

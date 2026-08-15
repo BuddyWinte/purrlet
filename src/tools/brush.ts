@@ -1,13 +1,8 @@
 /**
- * Purrlet v2.0.0
+ * Purrlet
+ * A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
  *
- * Please read the CONTRIBUTING.md file for our standards on code style and contribution.
- *
- * @author BuddyWinte (@buddywinte)
- * @contributors
- * - BuddyWinte (@buddywinte) - Initial implementation
- *
- * @since v0.9.0
+ * Please read the CONTRIBUTING.md file before you contrbute.
  */
 "use strict";
 
