@@ -201,4 +201,6 @@ See the [LICENSE](./LICENSE) file for more information.
 ## TODO
 
 List of planned features and improvements:
-- [ ] Mu
+- [ ] Layers Support
+- [ ] Brush Stroke optimization
+> Point decimation (if a point is too close to another, skip it), distance-based sampling, velocity-based sampling, coalesced pointer events...etc
