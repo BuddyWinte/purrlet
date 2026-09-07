@@ -117,7 +117,7 @@ Purrlet can also be loaded directly from a CDN:
 
 ```html
 <script type="module">
-    import { Purrlet } from "https://cdn.jsdelivr.net/npm/purrlet/dist/purrlet.mjs";
+    import { Purrlet } from "https://cdn.jsdelivr.net/npm/purrlet/dist/purrlet.min.mjs";
 
     const purrlet = new Purrlet({
         canvas: document.getElementById("canvas"),
