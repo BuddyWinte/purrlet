@@ -53,7 +53,7 @@ Works with plain HTML, React, Vue, Svelte, Solid, or basically anything that can
 
 <h2 align="center">Features</h2>
 
-<table>
+<table align="center">
   <tr>
     <td width="50%">
       <strong>Lightweight</strong><br>
