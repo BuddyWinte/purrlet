@@ -24,13 +24,14 @@
 </p>
 </p>
 
-----
+---
 
 <h2 align="center">What is Purrlet?</h2>
 
 <p>Purrlet is the <b>engine behind a drawing app.</b></p>
 
 It handles the annyoing stuff:
+
 - Pointer & touch input
 - Drawing and rendering
 - Pressure sensitivity
@@ -1031,18 +1032,18 @@ if (typeof window !== "undefined") {
 # TODO / Roadmap
 
 - [ ] Layers
-  - [ ] Add DocLayer + layer storage
-  - [ ] Add active layer
-  - [ ] Add/remove/rename layers
-  - [ ] Reorder layers
-  - [ ] Visibility, opacity & locking
-  - [ ] Move existing items into layers
-  - [ ] Update renderer for layers
-  - [ ] Update tools to use active layer
-  - [ ] Add undo/redo support
-  - [ ] Add serialization/export support
-  - [ ] Add tests
-  - [ ] Update README/API docs
+    - [ ] Add DocLayer + layer storage
+    - [ ] Add active layer
+    - [ ] Add/remove/rename layers
+    - [ ] Reorder layers
+    - [ ] Visibility, opacity & locking
+    - [ ] Move existing items into layers
+    - [ ] Update renderer for layers
+    - [ ] Update tools to use active layer
+    - [ ] Add undo/redo support
+    - [ ] Add serialization/export support
+    - [ ] Add tests
+    - [ ] Update README/API docs
 - [ ] Improved (drawing) Tablet support
 - [ ] More built-in tools
 - [ ] Improve engine architecture & performance

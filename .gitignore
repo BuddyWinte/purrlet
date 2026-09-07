@@ -9,3 +9,4 @@ yarn-error.log*
 Thumbs.db
 .idea/
 coverage/
+.purrlet-build/
