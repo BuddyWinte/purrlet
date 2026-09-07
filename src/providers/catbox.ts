@@ -15,99 +15,101 @@ import type { ProviderConfig, UploadProvider, UploadResult } from "./types";
 import { createLogger } from "../logger";
 
 export interface CatboxOptions extends ProviderConfig {
-  readonly userHash?: string;
-  readonly name?: string;
+    readonly userHash?: string;
+    readonly name?: string;
 }
 
 export const Catbox: UploadProvider<CatboxOptions> = async (
-  blob,
-  options = {},
+    blob,
+    options = {},
 ): Promise<UploadResult> => {
-  const logger = createLogger("Catbox", options.debug === true);
-  const filename = options.name ?? "purrlet.png";
+    const logger = createLogger("Catbox", options.debug === true);
+    const filename = options.name ?? "purrlet.png";
 
-  logger.log("Starting upload", {
-    filename,
-    size: blob.size,
-    type: blob.type,
-    authenticated: Boolean(options.userHash),
-  });
-
-  const form = new FormData();
-
-  form.append("reqtype", "fileupload");
-  form.append("fileToUpload", blob, filename);
-
-  if (options.userHash) {
-    logger.log("Using authenticated upload");
-    form.append("userhash", options.userHash);
-  }
-
-  logger.log("Sending upload request");
-
-  let response: Response;
-
-  try {
-    response = await fetch("https://catbox.moe/user/api.php", {
-      method: "POST",
-      body: form,
-    });
-  } catch (error) {
-    logger.error("Network request failed", error);
-
-    const message = error instanceof Error ? error.message : String(error);
-
-    const uploadError = new Error(`Catbox upload request failed: ${message}`);
-
-    Object.defineProperty(uploadError, "cause", {
-      value: error,
-      enumerable: false,
-      configurable: true,
+    logger.log("Starting upload", {
+        filename,
+        size: blob.size,
+        type: blob.type,
+        authenticated: Boolean(options.userHash),
     });
 
-    throw uploadError;
-  }
+    const form = new FormData();
 
-  logger.log("Response received", {
-    status: response.status,
-    statusText: response.statusText,
-    ok: response.ok,
-    redirected: response.redirected,
-    url: response.url,
-  });
+    form.append("reqtype", "fileupload");
+    form.append("fileToUpload", blob, filename);
 
-  const text = await response.text();
+    if (options.userHash) {
+        logger.log("Using authenticated upload");
+        form.append("userhash", options.userHash);
+    }
 
-  logger.log("Response body received", {
-    length: text.length,
-    body: text,
-  });
+    logger.log("Sending upload request");
 
-  if (!response.ok) {
-    logger.error("Upload failed", {
-      status: response.status,
-      response: text,
+    let response: Response;
+
+    try {
+        response = await fetch("https://catbox.moe/user/api.php", {
+            method: "POST",
+            body: form,
+        });
+    } catch (error) {
+        logger.error("Network request failed", error);
+
+        const message = error instanceof Error ? error.message : String(error);
+
+        const uploadError = new Error(
+            `Catbox upload request failed: ${message}`,
+        );
+
+        Object.defineProperty(uploadError, "cause", {
+            value: error,
+            enumerable: false,
+            configurable: true,
+        });
+
+        throw uploadError;
+    }
+
+    logger.log("Response received", {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+        redirected: response.redirected,
+        url: response.url,
     });
 
-    throw new Error(`Catbox upload failed (${response.status}): ${text}`);
-  }
+    const text = await response.text();
 
-  const url = text.trim();
-
-  if (!url.startsWith("https://")) {
-    logger.error("Invalid upload response", {
-      response: text,
-      parsedUrl: url,
+    logger.log("Response body received", {
+        length: text.length,
+        body: text,
     });
 
-    throw new Error(`Catbox returned an invalid URL: ${url}`);
-  }
+    if (!response.ok) {
+        logger.error("Upload failed", {
+            status: response.status,
+            response: text,
+        });
 
-  logger.log("Upload successful", {
-    url,
-    filename,
-    size: blob.size,
-  });
+        throw new Error(`Catbox upload failed (${response.status}): ${text}`);
+    }
 
-  return { url };
+    const url = text.trim();
+
+    if (!url.startsWith("https://")) {
+        logger.error("Invalid upload response", {
+            response: text,
+            parsedUrl: url,
+        });
+
+        throw new Error(`Catbox returned an invalid URL: ${url}`);
+    }
+
+    logger.log("Upload successful", {
+        url,
+        filename,
+        size: blob.size,
+    });
+
+    return { url };
 };

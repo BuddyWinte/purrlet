@@ -1,0 +1,19 @@
+{
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "oxc.oxfmt",
+    "[typescript]": {
+        "editor.defaultFormatter": "oxc.oxfmt"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "oxc.oxfmt"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "oxc.oxfmt"
+    },
+    "[html]": {
+        "editor.defaultFormatter": "oxc.oxfmt"
+    },
+    "[css]": {
+        "editor.defaultFormatter": "oxc.oxfmt"
+    }
+}

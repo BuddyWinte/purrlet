@@ -3,68 +3,65 @@
 import type { Document } from "./document";
 
 export interface HistoryCommand {
-  readonly execute: (document: Document) => void;
-  readonly undo: (document: Document) => void;
+    readonly execute: (document: Document) => void;
+    readonly undo: (document: Document) => void;
 }
 
 export class History {
-  private readonly undoStack: HistoryCommand[] = [];
-  private readonly redoStack: HistoryCommand[] = [];
+    private readonly undoStack: HistoryCommand[] = [];
+    private readonly redoStack: HistoryCommand[] = [];
 
-  execute(
-    document: Document,
-    command: HistoryCommand,
-  ): void {
-    command.execute(document);
+    execute(document: Document, command: HistoryCommand): void {
+        command.execute(document);
 
-    this.undoStack.push(command);
-    this.redoStack.length = 0;
-  }
-
-  undo(document: Document): boolean {
-    const command = this.undoStack.pop();
-
-    if (command === undefined) {
-      return false;
+        this.undoStack.push(command);
+        this.redoStack.length = 0;
     }
 
-    command.undo(document);
-    this.redoStack.push(command);
+    undo(document: Document): boolean {
+        const command = this.undoStack.pop();
 
-    return true;
-  }
+        if (command === undefined) {
+            return false;
+        }
 
-  redo(document: Document): boolean {
-    const command = this.redoStack.pop();
+        command.undo(document);
+        this.redoStack.push(command);
 
-    if (command === undefined) {
-      return false;
+        return true;
     }
 
-    command.execute(document);
-    this.undoStack.push(command);
+    redo(document: Document): boolean {
+        const command = this.redoStack.pop();
 
-    return true;
-  }
+        if (command === undefined) {
+            return false;
+        }
 
-  clear(): void {
-    this.undoStack.length = 0;
-    this.redoStack.length = 0;
-  }
+        command.execute(document);
+        this.undoStack.push(command);
 
-  canUndo(): boolean {
-    return this.undoStack.length > 0;
-  }
+        return true;
+    }
 
-  canRedo(): boolean {
-    return this.redoStack.length > 0;
-  }
+    clear(): void {
+        this.undoStack.length = 0;
+        this.redoStack.length = 0;
+    }
 
-  get undoCount(): number {
-    return this.undoStack.length;
-  }
+    canUndo(): boolean {
+        return this.undoStack.length > 0;
+    }
 
-  get redoCount(): number {
-    return this.redoStack.length;
-  }
+    canRedo(): boolean {
+        return this.redoStack.length > 0;
+    }
+
+    get undoCount(): number {
+        return this.undoStack.length;
+    }
+
+    get redoCount(): number {
+        return this.redoStack.length;
+    }
 }

@@ -14,113 +14,116 @@ import type { ProviderConfig, UploadProvider, UploadResult } from "./types";
 import { createLogger } from "../logger";
 
 export interface ImgBBOptions extends ProviderConfig {
-  readonly apiKey: string;
-  readonly name?: string;
+    readonly apiKey: string;
+    readonly name?: string;
 }
 
 export const ImgBB: UploadProvider<ImgBBOptions> = async (
-  blob,
-  options,
+    blob,
+    options,
 ): Promise<UploadResult> => {
-  const logger = createLogger("ImgBB", options?.debug === true);
-  const filename = options?.name ?? "purrlet.png";
+    const logger = createLogger("ImgBB", options?.debug === true);
+    const filename = options?.name ?? "purrlet.png";
 
-  if (!options?.apiKey) {
-    logger.error("An API key is required");
-    throw new Error("ImgBB API key is required");
-  }
+    if (!options?.apiKey) {
+        logger.error("An API key is required");
+        throw new Error("ImgBB API key is required");
+    }
 
-  logger.log("Starting upload", {
-    filename,
-    size: blob.size,
-    type: blob.type,
-  });
+    logger.log("Starting upload", {
+        filename,
+        size: blob.size,
+        type: blob.type,
+    });
 
-  const form = new FormData();
+    const form = new FormData();
 
-  form.append("image", blob, filename);
+    form.append("image", blob, filename);
 
-  logger.log("Request prepared", {
-    endpoint: "https://api.imgbb.com/1/upload",
-    method: "POST",
-  });
-
-  let response: Response;
-
-  try {
-    response = await fetch(
-      `https://api.imgbb.com/1/upload?key=${encodeURIComponent(options.apiKey)}`,
-      {
+    logger.log("Request prepared", {
+        endpoint: "https://api.imgbb.com/1/upload",
         method: "POST",
-        body: form,
-      },
-    );
-  } catch (error) {
-    logger.error("Network request failed", error);
-
-    const message = error instanceof Error ? error.message : String(error);
-
-    const uploadError = new Error(`ImgBB upload request failed: ${message}`);
-
-    Object.defineProperty(uploadError, "cause", {
-      value: error,
-      enumerable: false,
-      configurable: true,
     });
 
-    throw uploadError;
-  }
+    let response: Response;
 
-  logger.log("Response received", {
-    status: response.status,
-    statusText: response.statusText,
-    ok: response.ok,
-    redirected: response.redirected,
-    url: response.url,
-  });
+    try {
+        response = await fetch(
+            `https://api.imgbb.com/1/upload?key=${encodeURIComponent(options.apiKey)}`,
+            {
+                method: "POST",
+                body: form,
+            },
+        );
+    } catch (error) {
+        logger.error("Network request failed", error);
 
-  const data: unknown = await response.json();
+        const message = error instanceof Error ? error.message : String(error);
 
-  logger.log("Response body received", data);
+        const uploadError = new Error(
+            `ImgBB upload request failed: ${message}`,
+        );
 
-  if (!response.ok) {
-    logger.error("Upload failed", {
-      status: response.status,
-      response: data,
+        Object.defineProperty(uploadError, "cause", {
+            value: error,
+            enumerable: false,
+            configurable: true,
+        });
+
+        throw uploadError;
+    }
+
+    logger.log("Response received", {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+        redirected: response.redirected,
+        url: response.url,
     });
 
-    throw new Error(`ImgBB upload failed (${response.status})`);
-  }
+    const data: unknown = await response.json();
 
-  if (
-    typeof data !== "object" ||
-    data === null ||
-    !("success" in data) ||
-    data.success !== true ||
-    !("data" in data) ||
-    typeof data.data !== "object" ||
-    data.data === null ||
-    !("url" in data.data) ||
-    typeof data.data.url !== "string"
-  ) {
-    logger.error("Invalid upload response", data);
+    logger.log("Response body received", data);
 
-    throw new Error("ImgBB returned an invalid upload response");
-  }
+    if (!response.ok) {
+        logger.error("Upload failed", {
+            status: response.status,
+            response: data,
+        });
 
-  const result: UploadResult = {
-    url: data.data.url,
-    ...("delete_url" in data.data && typeof data.data.delete_url === "string"
-      ? { deleteUrl: data.data.delete_url }
-      : {}),
-  };
+        throw new Error(`ImgBB upload failed (${response.status})`);
+    }
 
-  logger.log("Upload successful", {
-    url: result.url,
-    filename,
-    size: blob.size,
-    hasDeleteUrl: Boolean(result.deleteUrl),
-  });
+    if (
+        typeof data !== "object" ||
+        data === null ||
+        !("success" in data) ||
+        data.success !== true ||
+        !("data" in data) ||
+        typeof data.data !== "object" ||
+        data.data === null ||
+        !("url" in data.data) ||
+        typeof data.data.url !== "string"
+    ) {
+        logger.error("Invalid upload response", data);
 
-  return result;
+        throw new Error("ImgBB returned an invalid upload response");
+    }
+
+    const result: UploadResult = {
+        url: data.data.url,
+        ...("delete_url" in data.data &&
+        typeof data.data.delete_url === "string"
+            ? { deleteUrl: data.data.delete_url }
+            : {}),
+    };
+
+    logger.log("Upload successful", {
+        url: result.url,
+        filename,
+        size: blob.size,
+        hasDeleteUrl: Boolean(result.deleteUrl),
+    });
+
+    return result;
 };

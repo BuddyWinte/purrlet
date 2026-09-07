@@ -1,4 +1,3 @@
-import typescript from "@rollup/plugin-typescript";
 import dts from "rollup-plugin-dts";
 import terser from "@rollup/plugin-terser";
 import pkg from "./package.json" with { type: "json" };
@@ -12,60 +11,67 @@ const banner = `/*!
  * https://github.com/BuddyWinte/purrlet
  *
  * Copyright (c) 2026 BuddyWinte
- * You may obtain a copy of the licens at
- * > http://www.apache.org/licenses/LICENSE-2.0
+ * You may obtain a copy of the license at
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * SPDX-License-Identifier: Apache-2.0
  */`;
 
 export default [
-  {
-    input: {
-      purrlet: "src/index.ts",
-      providers: "src/providers/index.ts",
-    },
-
-    output: [{
-      dir: "dist",
-      format: "es",
-      sourcemap: true,
-      banner,
-      exports: "named",
-      entryFileNames: "[name].mjs",
-    },
     {
-      dir: "dist",
-      format: "cjs",
-      sourcemap: true,
-      banner,
-      exports: "named",
-      entryFileNames: "[name].cjs",
-    },
-    ],
-
-    plugins: [
-      json(),
-      typescript({
-        tsconfig: "./tsconfig.json",
-      }),
-      terser({
-        format: {
-          comments: /^!/,
+        input: {
+            purrlet: ".purrlet-build/index.js",
+            providers: ".purrlet-build/providers/index.js",
         },
-      }),
-    ],
-  },
 
-  {
-    input: "dist/types/index.d.ts",
+        output: [
+            {
+                dir: "dist",
+                format: "es",
+                sourcemap: true,
+                banner,
+                exports: "named",
+                entryFileNames: "[name].mjs",
+            },
+            {
+                dir: "dist",
+                format: "cjs",
+                sourcemap: true,
+                banner,
+                exports: "named",
+                entryFileNames: "[name].cjs",
+            },
+        ],
 
-    output: {
-      file: "dist/index.d.ts",
-      format: "es",
+        plugins: [
+            json(),
+            terser({
+                format: {
+                    comments: /^!/,
+                },
+            }),
+        ],
     },
 
-    plugins: [
-      dts(),
-    ],
-  },
+    {
+        input: "dist/types/index.d.ts",
+
+        output: {
+            file: "dist/index.d.ts",
+            format: "es",
+        },
+
+        plugins: [dts()],
+    },
+
+    {
+        input: "dist/types/providers/index.d.ts",
+
+        output: {
+            file: "dist/providers.d.ts",
+            format: "es",
+        },
+
+        plugins: [dts()],
+    },
 ];
