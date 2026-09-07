@@ -1,33 +1,34 @@
 /**
- * ImgBB upload provider.
+ * Imgur upload provider.
  *
  * This provider is maintained for convenience and automatically uploads
- * files to ImgBB. It is not affiliated with or maintained by Purrlet.
- * For service-related issues, please contact ImgBB.
+ * files to Imgur. It is not affiliated with or maintained by Purrlet.
+ * For service-related issues, please contact Imgur.
  *
- * Please review ImgBB's terms of service and privacy policy before use:
- * https://imgbb.com/tos | https://imgbb.com/privacy
+ * Please review Imgur's terms of service and privacy policy before use:
+ * https://imgur.com/tos | https://imgur.com/privacy
  *
- * @see https://api.imgbb.com/
+ * @see https://apidocs.imgur.com/
  */
 import type { ProviderConfig, UploadProvider, UploadResult } from "./types";
 import { createLogger } from "../logger";
 
-export interface ImgBBOptions extends ProviderConfig {
-  readonly apiKey: string;
+export interface ImgurOptions extends ProviderConfig {
+  readonly clientId: string;
   readonly name?: string;
 }
 
-export const ImgBB: UploadProvider<ImgBBOptions> = async (
+export const Imgur: UploadProvider<ImgurOptions> = async (
   blob,
   options,
 ): Promise<UploadResult> => {
-  const logger = createLogger("ImgBB", options?.debug === true);
+  const logger = createLogger("Imgur", options?.debug === true);
   const filename = options?.name ?? "purrlet.png";
 
-  if (!options?.apiKey) {
-    logger.error("An API key is required");
-    throw new Error("ImgBB API key is required");
+  if (!options?.clientId) {
+    logger.error("A Client-ID is required");
+
+    throw new Error("Imgur Client-ID is required");
   }
 
   logger.log("Starting upload", {
@@ -41,26 +42,27 @@ export const ImgBB: UploadProvider<ImgBBOptions> = async (
   form.append("image", blob, filename);
 
   logger.log("Request prepared", {
-    endpoint: "https://api.imgbb.com/1/upload",
+    endpoint: "https://api.imgur.com/3/image",
     method: "POST",
+    authentication: "Client-ID",
   });
 
   let response: Response;
 
   try {
-    response = await fetch(
-      `https://api.imgbb.com/1/upload?key=${encodeURIComponent(options.apiKey)}`,
-      {
-        method: "POST",
-        body: form,
+    response = await fetch("https://api.imgur.com/3/image", {
+      method: "POST",
+      headers: {
+        Authorization: `Client-ID ${options.clientId}`,
       },
-    );
+      body: form,
+    });
   } catch (error) {
     logger.error("Network request failed", error);
 
     const message = error instanceof Error ? error.message : String(error);
 
-    const uploadError = new Error(`ImgBB upload request failed: ${message}`);
+    const uploadError = new Error(`Imgur upload request failed: ${message}`);
 
     Object.defineProperty(uploadError, "cause", {
       value: error,
@@ -89,7 +91,7 @@ export const ImgBB: UploadProvider<ImgBBOptions> = async (
       response: data,
     });
 
-    throw new Error(`ImgBB upload failed (${response.status})`);
+    throw new Error(`Imgur upload failed (${response.status})`);
   }
 
   if (
@@ -100,18 +102,20 @@ export const ImgBB: UploadProvider<ImgBBOptions> = async (
     !("data" in data) ||
     typeof data.data !== "object" ||
     data.data === null ||
-    !("url" in data.data) ||
-    typeof data.data.url !== "string"
+    !("link" in data.data) ||
+    typeof data.data.link !== "string"
   ) {
     logger.error("Invalid upload response", data);
 
-    throw new Error("ImgBB returned an invalid upload response");
+    throw new Error("Imgur returned an invalid upload response");
   }
 
   const result: UploadResult = {
-    url: data.data.url,
-    ...("delete_url" in data.data && typeof data.data.delete_url === "string"
-      ? { deleteUrl: data.data.delete_url }
+    url: data.data.link,
+    ...("deletehash" in data.data && typeof data.data.deletehash === "string"
+      ? {
+          deleteUrl: `https://api.imgur.com/3/image/${data.data.deletehash}`,
+        }
       : {}),
   };
 
