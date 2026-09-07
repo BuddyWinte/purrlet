@@ -6,27 +6,30 @@ Purrlet provides the difficult parts of building a drawing application, such as 
 
 ## Key Features
 
-* Pawesomely lightweight and dependency-free
-* TypeScript-first
-* Basically plug-and-play
-* Desktop, mobile, and drawing tablet support
-* Framework agnostic
-* Headless — no UI included
-* Pointer and touch input
-* Pressure sensitivity
-* Tool-based architecture
-* Undo/redo support
-* Canvas exporting
-* Custom tool support
-* High-DPI display support
-* Automatic canvas resizing
-* Optional upload providers
+- Pawesomely lightweight and dependency-free
+- TypeScript-first
+- Basically plug-and-play
+- Desktop, mobile, and drawing tablet support
+- Framework agnostic
+- Headless — no UI included
+- Pointer and touch input
+- Pressure sensitivity
+- Tool-based architecture
+- Undo/redo support
+- Canvas exporting
+- Custom tool support
+- High-DPI display support
+- Automatic canvas resizing
+- Optional upload providers
 
 <p align="center">
 /\_/\\<br>
 ( o.o )<br>
 > ^ <
 </p>
+
+Did purrlet help you in any way? Buy me a coffee to help me keep this project alive!
+> https://ko-fi.com/BuddyWinte
 
 ---
 
@@ -314,11 +317,11 @@ console.log(blob);
 
 `Blob` exports are useful for:
 
-* Uploading drawings
-* Saving files
-* Sending drawings to APIs
-* Using Purrlet providers
-* Creating downloads
+- Uploading drawings
+- Saving files
+- Sending drawings to APIs
+- Using Purrlet providers
+- Creating downloads
 
 ### Downloading a Blob
 
@@ -443,20 +446,20 @@ Purrlet uses pointer events to support multiple input devices through a common i
 
 Supported pointer types include:
 
-* Mouse
-* Touch
-* Pen
-* Drawing tablets
+- Mouse
+- Touch
+- Pen
+- Drawing tablets
 
 Tools receive normalized pointer information including:
 
-* X/Y coordinates
-* Pressure
-* Tilt X
-* Tilt Y
-* Pointer type
-* Pointer ID
-* Whether the pointer is currently pressed
+- X/Y coordinates
+- Pressure
+- Tilt X
+- Tilt Y
+- Pointer type
+- Pointer ID
+- Whether the pointer is currently pressed
 
 This allows tools to behave differently depending on the input device.
 
@@ -545,7 +548,7 @@ A simple tool can implement only the callbacks it needs.
 
 Purrlet can be extended with optional providers for uploading exported drawings to external services.
 
-Providers are **not part of Purrlet's core functionality**.
+Providers are --not part of Purrlet's core functionality--.
 
 They are separate integrations intended to make uploading a canvas easier.
 
@@ -924,14 +927,14 @@ Purrlet does not depend on a UI framework.
 
 It can be used with:
 
-* Plain JavaScript
-* TypeScript
-* React
-* Vue
-* Svelte
-* Solid
-* Angular
-* Other browser frameworks
+- Plain JavaScript
+- TypeScript
+- React
+- Vue
+- Svelte
+- Solid
+- Angular
+- Other browser frameworks
 
 Purrlet only manages the drawing engine.
 
@@ -939,14 +942,14 @@ Your application is responsible for the UI surrounding it.
 
 This means you can build your own:
 
-* Toolbars
-* Color pickers
-* Brush controls
-* Undo/redo buttons
-* Layer panels
-* Export menus
-* Mobile controls
-* Settings panels
+- Toolbars
+- Color pickers
+- Brush controls
+- Undo/redo buttons
+- Layer panels
+- Export menus
+- Mobile controls
+- Settings panels
 
 without Purrlet imposing a particular design.
 
@@ -958,13 +961,13 @@ Purrlet intentionally does not provide a drawing interface.
 
 There is no built-in:
 
-* Toolbar
-* Color picker
-* Menu
-* Modal
-* Settings panel
-* Layer UI
-* Export dialog
+- Toolbar
+- Color picker
+- Menu
+- Modal
+- Settings panel
+- Layer UI
+- Export dialog
 
 Instead, Purrlet provides the underlying drawing functionality.
 
@@ -1007,7 +1010,7 @@ If you would like to contribute a new tool, provider, optimization, bug fix, or 
 
 When contributing a tool, please keep Purrlet's headless architecture in mind.
 
-**Tools should provide drawing functionality without requiring a particular UI.**
+--Tools should provide drawing functionality without requiring a particular UI.--
 
 ---
 
