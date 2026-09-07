@@ -1,6 +1,8 @@
 # Purrlet
 
-A lightweight, headless canvas drawing engine for the web.
+[![](https://data.jsdelivr.com/v1/package/npm/purrlet/badge)](https://www.jsdelivr.com/package/npm/purrlet)
+
+A lightweight, dependency-free, headless canvas drawing engine for the web.
 
 Purrlet provides the difficult parts of building a drawing application, such as pointer input, rendering, tools, pressure sensitivity, undo/redo, and exporting, while leaving the UI completely up to you.
 
@@ -11,7 +13,7 @@ Purrlet provides the difficult parts of building a drawing application, such as 
 - Basically plug-and-play
 - Desktop, mobile, and drawing tablet support
 - Framework agnostic
-- Headless — no UI included
+- Headless (you do all the UI!)
 - Pointer and touch input
 - Pressure sensitivity
 - Tool-based architecture

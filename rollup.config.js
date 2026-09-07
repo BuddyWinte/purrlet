@@ -25,7 +25,7 @@ export default [
       providers: "src/providers/index.ts",
     },
 
-    output: {
+    output: [{
       dir: "dist",
       format: "es",
       sourcemap: true,
@@ -33,6 +33,15 @@ export default [
       exports: "named",
       entryFileNames: "[name].mjs",
     },
+    {
+      dir: "dist",
+      format: "cjs",
+      sourcemap: true,
+      banner,
+      exports: "named",
+      entryFileNames: "[name].cjs",
+    },
+    ],
 
     plugins: [
       json(),

@@ -330,6 +330,409 @@ export class Renderer {
     });
   }
 
+  private renderFill(fill: DocFill): void {
+    const canvas = this.ctx.canvas;
+
+    const dpr =
+      typeof window === "undefined"
+        ? 1
+        : Math.max(
+            1,
+            normalizeNumber(
+              window.devicePixelRatio,
+              1,
+            ),
+          );
+
+    const x = Math.floor(fill.x * dpr);
+    const y = Math.floor(fill.y * dpr);
+
+    if (
+      x < 0 ||
+      y < 0 ||
+      x >= canvas.width ||
+      y >= canvas.height
+    ) {
+      return;
+    }
+
+    const color = this.parseColor(fill.color);
+
+    if (color === null) {
+      return;
+    }
+
+    const image = this.ctx.getImageData(
+      0,
+      0,
+      canvas.width,
+      canvas.height,
+    );
+
+    this.floodFill(
+      image,
+      x,
+      y,
+      color,
+      normalizeTolerance(fill.tolerance),
+    );
+
+    this.ctx.putImageData(
+      image,
+      0,
+      0,
+    );
+  }
+
+  private floodFill(
+    image: ImageData,
+    startX: number,
+    startY: number,
+    fill: [number, number, number, number],
+    tolerance: number,
+  ): void {
+    const { width, height, data } = image;
+
+    const startIndex =
+      (startY * width + startX) * 4;
+
+    const target: [
+      number,
+      number,
+      number,
+      number,
+    ] = [
+      data[startIndex] ?? 0,
+      data[startIndex + 1] ?? 0,
+      data[startIndex + 2] ?? 0,
+      data[startIndex + 3] ?? 0,
+    ];
+
+    if (
+      this.colorsMatch(
+        target,
+        fill,
+        tolerance,
+      )
+    ) {
+      return;
+    }
+
+    const threshold =
+      tolerance * tolerance;
+
+    const matches = (
+      x: number,
+      y: number,
+    ): boolean => {
+      const index =
+        (y * width + x) * 4;
+
+      const dr =
+        (data[index] ?? 0) - target[0];
+
+      const dg =
+        (data[index + 1] ?? 0) - target[1];
+
+      const db =
+        (data[index + 2] ?? 0) - target[2];
+
+      const da =
+        (data[index + 3] ?? 0) - target[3];
+
+      return (
+        dr * dr +
+        dg * dg +
+        db * db +
+        da * da <=
+        threshold
+      );
+    };
+
+    const queue: Array<
+      readonly [number, number]
+    > = [[startX, startY]];
+
+    const visited = new Uint8Array(
+      width * height,
+    );
+
+    while (queue.length > 0) {
+      const point = queue.pop();
+
+      if (point === undefined) {
+        continue;
+      }
+
+      const [x, y] = point;
+
+      if (
+        x < 0 ||
+        y < 0 ||
+        x >= width ||
+        y >= height
+      ) {
+        continue;
+      }
+
+      const pixelIndex =
+        y * width + x;
+
+      if (
+        visited[pixelIndex] !== 0
+      ) {
+        continue;
+      }
+
+      if (!matches(x, y)) {
+        continue;
+      }
+
+      visited[pixelIndex] = 1;
+
+      let left = x;
+
+      while (
+        left > 0 &&
+        matches(left - 1, y)
+      ) {
+        left--;
+      }
+
+      let right = x;
+
+      while (
+        right < width - 1 &&
+        matches(right + 1, y)
+      ) {
+        right++;
+      }
+
+      for (
+        let currentX = left;
+        currentX <= right;
+        currentX++
+      ) {
+        const index =
+          (y * width + currentX) * 4;
+
+        data[index] = fill[0];
+        data[index + 1] = fill[1];
+        data[index + 2] = fill[2];
+        data[index + 3] = fill[3];
+
+        visited[
+          y * width + currentX
+        ] = 1;
+
+        if (y > 0) {
+          const aboveIndex =
+            (y - 1) * width +
+            currentX;
+
+          if (
+            visited[aboveIndex] === 0 &&
+            matches(
+              currentX,
+              y - 1,
+            )
+          ) {
+            queue.push([
+              currentX,
+              y - 1,
+            ]);
+          }
+        }
+
+        if (y < height - 1) {
+          const belowIndex =
+            (y + 1) * width +
+            currentX;
+
+          if (
+            visited[belowIndex] === 0 &&
+            matches(
+              currentX,
+              y + 1,
+            )
+          ) {
+            queue.push([
+              currentX,
+              y + 1,
+            ]);
+          }
+        }
+      }
+    }
+
+    this.expandFillEdges(
+      image,
+      fill,
+      target,
+    );
+  }
+
+  private expandFillEdges(
+    image: ImageData,
+    fill: readonly [
+      number,
+      number,
+      number,
+      number,
+    ],
+    target: readonly [
+      number,
+      number,
+      number,
+      number,
+    ],
+  ): void {
+    const { width, height, data } = image;
+
+    const original = new Uint8ClampedArray(
+      data,
+    );
+
+    const isFill = (
+      x: number,
+      y: number,
+    ): boolean => {
+      const index =
+        (y * width + x) * 4;
+
+      return (
+        data[index] === fill[0] &&
+        data[index + 1] === fill[1] &&
+        data[index + 2] === fill[2] &&
+        data[index + 3] === fill[3]
+      );
+    };
+
+    const blendEdge = (
+      x: number,
+      y: number,
+    ): void => {
+      const index =
+        (y * width + x) * 4;
+
+      const currentR =
+        original[index] ?? 0;
+
+      const currentG =
+        original[index + 1] ?? 0;
+
+      const currentB =
+        original[index + 2] ?? 0;
+
+      const currentA =
+        original[index + 3] ?? 0;
+
+      const targetDistance =
+        Math.sqrt(
+          (currentR - target[0]) ** 2 +
+          (currentG - target[1]) ** 2 +
+          (currentB - target[2]) ** 2 +
+          (currentA - target[3]) ** 2,
+        );
+
+      const maxDistance = 128;
+
+      if (
+        targetDistance <= 0 ||
+        targetDistance >= maxDistance
+      ) {
+        return;
+      }
+
+      const amount =
+        1 -
+        targetDistance /
+          maxDistance;
+
+      data[index] = Math.round(
+        currentR * (1 - amount) +
+        fill[0] * amount,
+      );
+
+      data[index + 1] = Math.round(
+        currentG * (1 - amount) +
+        fill[1] * amount,
+      );
+
+      data[index + 2] = Math.round(
+        currentB * (1 - amount) +
+        fill[2] * amount,
+      );
+
+      data[index + 3] = Math.round(
+        currentA * (1 - amount) +
+        fill[3] * amount,
+      );
+    };
+
+    for (
+      let y = 1;
+      y < height - 1;
+      y++
+    ) {
+      for (
+        let x = 1;
+        x < width - 1;
+        x++
+      ) {
+        if (!isFill(x, y)) {
+          continue;
+        }
+
+        const neighbors = [
+          [x - 1, y],
+          [x + 1, y],
+          [x, y - 1],
+          [x, y + 1],
+        ] as const;
+
+        for (const [nx, ny] of neighbors) {
+          if (
+            isFill(nx, ny)
+          ) {
+            continue;
+          }
+
+          blendEdge(nx, ny);
+        }
+      }
+    }
+  }
+
+  private colorsMatch(
+    a: readonly [
+      number,
+      number,
+      number,
+      number,
+    ],
+    b: readonly [
+      number,
+      number,
+      number,
+      number,
+    ],
+    tolerance: number,
+  ): boolean {
+    const dr = a[0] - b[0];
+    const dg = a[1] - b[1];
+    const db = a[2] - b[2];
+    const da = a[3] - b[3];
+
+    const distance =
+      dr * dr +
+      dg * dg +
+      db * db +
+      da * da;
+
+    return distance <= tolerance * tolerance;
+  }
+
   private renderItem(item: DocumentItem): void {
     switch (item.type) {
       case "stroke":
@@ -390,29 +793,6 @@ export class Renderer {
     this.ctx.restore();
   }
 
-  private renderFill(fill: DocFill): void {
-    const canvas = this.ctx.canvas;
-
-    const x = Math.floor(fill.x);
-    const y = Math.floor(fill.y);
-
-    if (x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) {
-      return;
-    }
-
-    const color = this.parseColor(fill.color);
-
-    if (color === null) {
-      return;
-    }
-
-    const image = this.ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-    this.floodFill(image, x, y, color, normalizeTolerance(fill.tolerance));
-
-    this.ctx.putImageData(image, 0, 0);
-  }
-
   private renderRectangle(rectangle: DocRectangle): void {
     this.ctx.save();
 
@@ -439,121 +819,6 @@ export class Renderer {
 
     this.activeStroke = null;
     this.redraw();
-  }
-
-  private floodFill(
-    image: ImageData,
-    startX: number,
-    startY: number,
-    fill: [number, number, number, number],
-    tolerance: number,
-  ): void {
-    const { width, height, data } = image;
-
-    const startIndex = (startY * width + startX) * 4;
-
-    const target: [number, number, number, number] = [
-      data[startIndex] ?? 0,
-      data[startIndex + 1] ?? 0,
-      data[startIndex + 2] ?? 0,
-      data[startIndex + 3] ?? 0,
-    ];
-
-    if (this.colorsMatch(target, fill, tolerance)) {
-      return;
-    }
-
-    const matches = (x: number, y: number): boolean => {
-      const index = (y * width + x) * 4;
-
-      const dr = (data[index] ?? 0) - target[0];
-
-      const dg = (data[index + 1] ?? 0) - target[1];
-
-      const db = (data[index + 2] ?? 0) - target[2];
-
-      const da = (data[index + 3] ?? 0) - target[3];
-
-      return dr * dr + dg * dg + db * db + da * da <= tolerance * tolerance;
-    };
-
-    const queue: Array<readonly [number, number]> = [[startX, startY]];
-
-    while (queue.length > 0) {
-      const point = queue.pop();
-
-      if (point === undefined) {
-        continue;
-      }
-
-      const [x, y] = point;
-
-      if (!matches(x, y)) {
-        continue;
-      }
-
-      let left = x;
-
-      while (left >= 0 && matches(left, y)) {
-        left--;
-      }
-
-      left++;
-
-      let spanAbove = false;
-      let spanBelow = false;
-
-      for (
-        let currentX = left;
-        currentX < width && matches(currentX, y);
-        currentX++
-      ) {
-        const index = (y * width + currentX) * 4;
-
-        data[index] = fill[0];
-        data[index + 1] = fill[1];
-        data[index + 2] = fill[2];
-        data[index + 3] = fill[3];
-
-        if (y > 0) {
-          const above = matches(currentX, y - 1);
-
-          if (above && !spanAbove) {
-            queue.push([currentX, y - 1]);
-            spanAbove = true;
-          } else if (!above) {
-            spanAbove = false;
-          }
-        }
-
-        if (y < height - 1) {
-          const below = matches(currentX, y + 1);
-
-          if (below && !spanBelow) {
-            queue.push([currentX, y + 1]);
-            spanBelow = true;
-          } else if (!below) {
-            spanBelow = false;
-          }
-        }
-      }
-    }
-  }
-
-  private colorsMatch(
-    a: readonly [number, number, number, number],
-    b: readonly [number, number, number, number],
-    tolerance: number,
-  ): boolean {
-    const dr = a[0] - b[0];
-
-    const dg = a[1] - b[1];
-
-    const db = a[2] - b[2];
-
-    const da = a[3] - b[3];
-
-    return dr * dr + dg * dg + db * db + da * da <= tolerance * tolerance;
   }
 
   private parseColor(color: string): [number, number, number, number] | null {
