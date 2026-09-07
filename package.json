@@ -71,5 +71,8 @@
     "rollup-plugin-dts": "^6.4.1",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.66.0"
+  },
+  "dependencies": {
+    "tslib": "^2.8.1"
   }
 }
