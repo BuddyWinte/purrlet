@@ -1,10 +1,9 @@
 # Purrlet
-
-[![](https://data.jsdelivr.com/v1/package/npm/purrlet/badge)](https://www.jsdelivr.com/package/npm/purrlet)
-
-A lightweight, dependency-free, headless canvas drawing engine for the web.
+**A lightweight, dependency-free, headless canvas drawing engine for the web.**
 
 Purrlet provides the difficult parts of building a drawing application, such as pointer input, rendering, tools, pressure sensitivity, undo/redo, and exporting, while leaving the UI completely up to you.
+
+Build your own drawing experience with plain HTML, React, Vue, Svelte, Solid, or any other framework.
 
 ## Key Features
 
@@ -997,10 +996,12 @@ if (typeof window !== "undefined") {
 
 ---
 
-# TODO
-
-Planned features and improvements:
+# TODO / Roadmap
 - [ ] Layers
+- [ ] Improved (drawing) Tablet support
+- [ ] More built-in tools
+- [ ] Better engine (more optimized and easier to add more tools)
+- [ ] More providers
 
 ---
 
@@ -1008,15 +1009,22 @@ Planned features and improvements:
 
 Contributions are welcome.
 
-If you would like to contribute a new tool, provider, optimization, bug fix, or other improvement, open a pull request.
+If you would like to contribute a new tool, provider, optimization, bug fix, or other improvement, open a pull request (PR) or a issue for suggestions and bug reports.
 
 When contributing a tool, please keep Purrlet's headless architecture in mind.
 
---Tools should provide drawing functionality without requiring a particular UI.--
+**Tools should provide drawing functionality without requiring a particular UI.**
+
+---
+
+# Support Purrlet
+Did Purrlet help you build something? If you'd like to support development, you can buy me a coffee:
+> https://ko-fi.com/BuddyWinte
 
 ---
 
 # License
+*Licensed under the Apache License, Version 2.0.*
 
 Copyright 2026 BuddyWinte
 
