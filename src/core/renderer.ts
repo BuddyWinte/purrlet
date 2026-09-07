@@ -564,6 +564,39 @@ export class Renderer {
         }
       }
     }
+  }
+
+  private colorsMatch(
+    a: readonly [number, number, number, number],
+    b: readonly [number, number, number, number],
+    tolerance: number,
+  ): boolean {
+    const dr = a[0] - b[0];
+
+    const dg = a[1] - b[1];
+
+    const db = a[2] - b[2];
+
+    const da = a[3] - b[3];
+
+    return dr * dr + dg * dg + db * db + da * da <= tolerance * tolerance;
+  }
+
+  private parseColor(color: string): [number, number, number, number] | null {
+    if (typeof document === "undefined") {
+      return null;
+    }
+
+    const canvas = document.createElement("canvas");
+
+    canvas.width = 1;
+    canvas.height = 1;
+
+    const context = canvas.getContext("2d");
+
+    if (context === null) {
+      return null;
+    }
 
     this.expandFillEdges(
       image,
