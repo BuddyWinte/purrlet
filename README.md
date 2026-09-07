@@ -116,11 +116,11 @@ Purrlet can also be loaded directly from a CDN:
 
 ```html
 <script type="module">
-  import { Purrlet } from "https://cdn.jsdelivr.net/npm/purrlet/dist/purrlet.mjs";
+    import { Purrlet } from "https://cdn.jsdelivr.net/npm/purrlet/dist/purrlet.mjs";
 
-  const purrlet = new Purrlet({
-    canvas: document.getElementById("canvas")
-  });
+    const purrlet = new Purrlet({
+        canvas: document.getElementById("canvas"),
+    });
 </script>
 ```
 
@@ -142,7 +142,7 @@ import { Purrlet } from "purrlet";
 const canvas = document.querySelector("#canvas");
 
 const purrlet = new Purrlet({
-  canvas
+    canvas,
 });
 ```
 
@@ -156,7 +156,7 @@ The `canvas` option can also accept a CSS selector:
 
 ```js
 const purrlet = new Purrlet({
-  canvas: "#canvas"
+    canvas: "#canvas",
 });
 ```
 
@@ -168,8 +168,8 @@ This is useful when you do not already have a reference to the canvas element.
 
 ```js
 const purrlet = new Purrlet({
-  canvas,
-  defaultTool: "brush"
+    canvas,
+    defaultTool: "brush",
 });
 ```
 
@@ -189,7 +189,7 @@ You can provide either an element:
 
 ```js
 const purrlet = new Purrlet({
-  canvas: document.querySelector("#canvas")
+    canvas: document.querySelector("#canvas"),
 });
 ```
 
@@ -197,7 +197,7 @@ or a selector:
 
 ```js
 const purrlet = new Purrlet({
-  canvas: "#canvas"
+    canvas: "#canvas",
 });
 ```
 
@@ -207,8 +207,8 @@ The tool that should be activated when the Purrlet instance is created.
 
 ```js
 const purrlet = new Purrlet({
-  canvas,
-  defaultTool: "brush"
+    canvas,
+    defaultTool: "brush",
 });
 ```
 
@@ -220,8 +220,8 @@ Enable debug logging:
 
 ```js
 const purrlet = new Purrlet({
-  canvas,
-  debug: true
+    canvas,
+    debug: true,
 });
 ```
 
@@ -249,8 +249,8 @@ The standard drawing tool.
 
 ```js
 purrlet.setTool("brush", {
-  color: "#000000",
-  size: 5
+    color: "#000000",
+    size: 5,
 });
 ```
 
@@ -258,8 +258,8 @@ Example with a larger brush:
 
 ```js
 purrlet.setTool("brush", {
-  color: "#ff69b4",
-  size: 20
+    color: "#ff69b4",
+    size: 20,
 });
 ```
 
@@ -271,7 +271,7 @@ Removes existing drawing data.
 
 ```js
 purrlet.setTool("eraser", {
-  size: 20
+    size: 20,
 });
 ```
 
@@ -283,8 +283,8 @@ Use `setTool()` to change the active tool:
 
 ```js
 purrlet.setTool("brush", {
-  color: "#000000",
-  size: 5
+    color: "#000000",
+    size: 5,
 });
 ```
 
@@ -292,16 +292,16 @@ You can change tools at any time:
 
 ```js
 brushButton.addEventListener("click", () => {
-  purrlet.setTool("brush", {
-    color: "#000000",
-    size: 5
-  });
+    purrlet.setTool("brush", {
+        color: "#000000",
+        size: 5,
+    });
 });
 
 eraserButton.addEventListener("click", () => {
-  purrlet.setTool("eraser", {
-    size: 20
-  });
+    purrlet.setTool("eraser", {
+        size: 20,
+    });
 });
 ```
 
@@ -369,8 +369,8 @@ Converts the canvas into a `Blob`.
 const blob = await purrlet.toBlob();
 
 if (!blob) {
-  console.error("Unable to export canvas.");
-  return;
+    console.error("Unable to export canvas.");
+    return;
 }
 
 console.log(blob);
@@ -412,8 +412,8 @@ Converts the canvas into a data URL.
 const dataUrl = purrlet.toDataURL();
 
 if (!dataUrl) {
-  console.error("Unable to export canvas.");
-  return;
+    console.error("Unable to export canvas.");
+    return;
 }
 
 console.log(dataUrl);
@@ -425,7 +425,7 @@ This can be useful for displaying the drawing elsewhere:
 const image = document.querySelector("#preview");
 
 if (image) {
-  image.src = purrlet.toDataURL() ?? "";
+    image.src = purrlet.toDataURL() ?? "";
 }
 ```
 
@@ -451,8 +451,8 @@ For example:
 
 ```css
 canvas {
-  width: 800px;
-  height: 600px;
+    width: 800px;
+    height: 600px;
 }
 ```
 
@@ -464,8 +464,8 @@ Purrlet works with responsive canvas elements:
 
 ```css
 canvas {
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 }
 ```
 
@@ -538,23 +538,23 @@ A tool provides a name and a factory that creates a tool instance.
 
 ```ts
 const myTool = {
-  name: "my-tool",
+    name: "my-tool",
 
-  create(config) {
-    return {
-      onPointerDown(pointer, renderer) {
-        // Start drawing
-      },
+    create(config) {
+        return {
+            onPointerDown(pointer, renderer) {
+                // Start drawing
+            },
 
-      onPointerMove(pointer, renderer) {
-        // Continue drawing
-      },
+            onPointerMove(pointer, renderer) {
+                // Continue drawing
+            },
 
-      onPointerUp(pointer, renderer) {
-        // Finish drawing
-      }
-    };
-  }
+            onPointerUp(pointer, renderer) {
+                // Finish drawing
+            },
+        };
+    },
 };
 
 purrlet.registerTool(myTool);
@@ -564,7 +564,7 @@ After registration, the tool can be activated normally:
 
 ```js
 purrlet.setTool("my-tool", {
-  // Your configuration
+    // Your configuration
 });
 ```
 
@@ -574,28 +574,15 @@ Tools can respond to several lifecycle events:
 
 ```ts
 interface ToolInstance<TConfig> {
-  onPointerDown?(
-    pointer: PurrletPointer,
-    renderer: Renderer
-  ): void;
+    onPointerDown?(pointer: PurrletPointer, renderer: Renderer): void;
 
-  onPointerMove?(
-    pointer: PurrletPointer,
-    renderer: Renderer
-  ): void;
+    onPointerMove?(pointer: PurrletPointer, renderer: Renderer): void;
 
-  onPointerUp?(
-    pointer: PurrletPointer,
-    renderer: Renderer
-  ): void;
+    onPointerUp?(pointer: PurrletPointer, renderer: Renderer): void;
 
-  onActivate?(
-    renderer: Renderer
-  ): void;
+    onActivate?(renderer: Renderer): void;
 
-  onDeactivate?(
-    renderer: Renderer
-  ): void;
+    onDeactivate?(renderer: Renderer): void;
 }
 ```
 
@@ -630,13 +617,13 @@ import { Catbox } from "purrlet/providers";
 const canvas = document.querySelector("canvas");
 
 const purrlet = new Purrlet({
-  canvas
+    canvas,
 });
 
 const blob = await purrlet.toBlob();
 
 if (!blob) {
-  throw new Error("Unable to export canvas.");
+    throw new Error("Unable to export canvas.");
 }
 
 const result = await Catbox(blob);
@@ -650,16 +637,16 @@ For example, when the user clicks an upload button:
 
 ```js
 uploadButton.addEventListener("click", async () => {
-  const blob = await purrlet.toBlob();
+    const blob = await purrlet.toBlob();
 
-  if (!blob) {
-    console.error("Unable to export canvas.");
-    return;
-  }
+    if (!blob) {
+        console.error("Unable to export canvas.");
+        return;
+    }
 
-  const result = await Catbox(blob);
+    const result = await Catbox(blob);
 
-  console.log(`Uploaded to ${result.url}`);
+    console.log(`Uploaded to ${result.url}`);
 });
 ```
 
@@ -713,7 +700,7 @@ For example, a framework component can create an instance when mounted and destr
 
 ```js
 const purrlet = new Purrlet({
-  canvas
+    canvas,
 });
 
 // Later:
@@ -751,8 +738,8 @@ Activates a registered tool.
 
 ```js
 purrlet.setTool("brush", {
-  color: "#000000",
-  size: 5
+    color: "#000000",
+    size: 5,
 });
 ```
 
@@ -878,7 +865,7 @@ Returns whether the Purrlet instance successfully initialized.
 
 ```js
 if (purrlet.isActive()) {
-  console.log("Purrlet is ready.");
+    console.log("Purrlet is ready.");
 }
 ```
 
@@ -902,10 +889,10 @@ You can import Purrlet types directly:
 
 ```ts
 import type {
-  PurrletConfig,
-  PurrletPointer,
-  Tool,
-  ToolInstance
+    PurrletConfig,
+    PurrletPointer,
+    Tool,
+    ToolInstance,
 } from "purrlet";
 ```
 
@@ -913,9 +900,9 @@ import type {
 
 ```ts
 interface PurrletConfig {
-  canvas: HTMLCanvasElement | string;
-  defaultTool?: string;
-  debug?: boolean;
+    canvas: HTMLCanvasElement | string;
+    defaultTool?: string;
+    debug?: boolean;
 }
 ```
 
@@ -923,19 +910,19 @@ interface PurrletConfig {
 
 ```ts
 interface PurrletPointer {
-  x: number;
-  y: number;
+    x: number;
+    y: number;
 
-  pressure: number;
+    pressure: number;
 
-  tiltX: number;
-  tiltY: number;
+    tiltX: number;
+    tiltY: number;
 
-  pointerType: "mouse" | "pen" | "touch";
+    pointerType: "mouse" | "pen" | "touch";
 
-  pointerId: number;
+    pointerId: number;
 
-  isDown: boolean;
+    isDown: boolean;
 }
 ```
 
@@ -943,11 +930,9 @@ interface PurrletPointer {
 
 ```ts
 interface Tool<TConfig = unknown> {
-  readonly name: string;
+    readonly name: string;
 
-  create(
-    config: TConfig
-  ): ToolInstance<TConfig>;
+    create(config: TConfig): ToolInstance<TConfig>;
 }
 ```
 
@@ -955,28 +940,15 @@ interface Tool<TConfig = unknown> {
 
 ```ts
 interface ToolInstance<TConfig = unknown> {
-  onPointerDown?(
-    pointer: PurrletPointer,
-    renderer: Renderer
-  ): void;
+    onPointerDown?(pointer: PurrletPointer, renderer: Renderer): void;
 
-  onPointerMove?(
-    pointer: PurrletPointer,
-    renderer: Renderer
-  ): void;
+    onPointerMove?(pointer: PurrletPointer, renderer: Renderer): void;
 
-  onPointerUp?(
-    pointer: PurrletPointer,
-    renderer: Renderer
-  ): void;
+    onPointerUp?(pointer: PurrletPointer, renderer: Renderer): void;
 
-  onActivate?(
-    renderer: Renderer
-  ): void;
+    onActivate?(renderer: Renderer): void;
 
-  onDeactivate?(
-    renderer: Renderer
-  ): void;
+    onDeactivate?(renderer: Renderer): void;
 }
 ```
 
@@ -1048,15 +1020,16 @@ For example:
 
 ```js
 if (typeof window !== "undefined") {
-  const purrlet = new Purrlet({
-    canvas
-  });
+    const purrlet = new Purrlet({
+        canvas,
+    });
 }
 ```
 
 ---
 
 # TODO / Roadmap
+
 - [ ] Layers
   - [ ] Add DocLayer + layer storage
   - [ ] Add active layer
@@ -1090,13 +1063,16 @@ When contributing a tool, please keep Purrlet's headless architecture in mind.
 ---
 
 # Support Purrlet
+
 Did Purrlet help you build something? If you'd like to support development, you can buy me a coffee:
+
 > https://ko-fi.com/BuddyWinte
 
 ---
 
 # License
-*Licensed under the Apache License, Version 2.0.*
+
+_Licensed under the Apache License, Version 2.0._
 
 Copyright 2026 BuddyWinte
 

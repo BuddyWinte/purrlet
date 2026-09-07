@@ -1,0 +1,9 @@
+{
+    "formatter": {
+        "external": {
+            "command": "oxfmt",
+            "arguments": ["--stdin-filepath", "{buffer_path}"]
+        }
+    },
+    "format_on_save": "on"
+}
