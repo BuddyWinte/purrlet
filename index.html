@@ -1,0 +1,120 @@
+<!doctype html>
+<!-- MAKE SURE YOU BUILD FIRST BEFORE USING THIS --!>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Purrlet Playground</title>
+    </head>
+
+    <body>
+        <h1>Purrlet Playground</h1>
+        <p>
+            A basic test page for
+            <a href="https://github.com/BuddyWinte/purrlet">Purrlet</a>.
+        </p>
+        <hr />
+        <p>
+            Tool:
+            <button data-tool="brush">Brush</button>
+            <button data-tool="eraser">Eraser</button>
+            <button data-tool="line">Line</button>
+            <button data-tool="fill">Fill</button>
+        </p>
+        <p>
+            Color:
+            <input id="color" type="color" value="#000000" />
+        </p>
+        <p>
+            Size:
+            <input id="size" type="range" min="1" max="50" value="5" />
+            <span id="size-value">5</span>px
+        </p>
+        <p>
+            <button id="undo">Undo</button>
+            <button id="redo">Redo</button>
+            <button id="clear">Clear</button>
+            <button id="export">Export PNG</button>
+        </p>
+        <canvas
+            id="canvas"
+            width="800"
+            height="500"
+            style="border: 1px solid black; touch-action: none"
+        >
+        </canvas>
+        <script type="module">
+            import { Purrlet } from "./dist/purrlet.mjs";
+            const canvas = document.querySelector("#canvas");
+            const color = document.querySelector("#color");
+            const size = document.querySelector("#size");
+            const sizeValue = document.querySelector("#size-value");
+
+            const purrlet = new Purrlet({
+                canvas,
+                defaultTool: "brush",
+            });
+
+            let currentTool = "brush";
+
+            function getConfig() {
+                if (currentTool === "eraser") {
+                    return {
+                        size: Number(size.value),
+                    };
+                }
+
+                if (currentTool === "fill") {
+                    return {
+                        color: color.value,
+                        tolerance: 32,
+                    };
+                }
+
+                return {
+                    color: color.value,
+                    size: Number(size.value),
+                };
+            }
+
+            function updateTool() {
+                purrlet.setTool(currentTool, getConfig());
+            }
+
+            document.querySelectorAll("[data-tool]").forEach((button) => {
+                button.addEventListener("click", () => {
+                    currentTool = button.dataset.tool;
+                    updateTool();
+                });
+            });
+
+            color.addEventListener("input", updateTool);
+
+            size.addEventListener("input", () => {
+                sizeValue.textContent = size.value;
+                updateTool();
+            });
+
+            document.querySelector("#undo").addEventListener("click", () => {
+                purrlet.undo();
+            });
+
+            document.querySelector("#redo").addEventListener("click", () => {
+                purrlet.redo();
+            });
+
+            document.querySelector("#clear").addEventListener("click", () => {
+                purrlet.clear();
+            });
+
+            document
+                .querySelector("#export")
+                .addEventListener("click", async () => {
+                    await purrlet.export({
+                        type: "image/png",
+                        filename: "purrlet-test.png",
+                    });
+                });
+        </script>
+    </body>
+</html>
