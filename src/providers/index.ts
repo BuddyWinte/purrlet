@@ -5,6 +5,6 @@
   * Please read the CONTRIBUTING.md file before you contrbute.
   */
 
-export * from "./imgbb";
-export * from "./catbox";
+export { Imgbb, ImgbbOptions } from "./imgbb";
+export { Catbox, CatboxOptions } from "./catbox";
 export * from "./types";

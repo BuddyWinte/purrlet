@@ -6,7 +6,7 @@
  */
 "use strict";
 
-import type { RendererMode } from "../types";
+import type { RendererMode, DocFill, DocStroke } from "../types";
 import { Document } from "./document";
 import { History } from "./history";
 
@@ -179,35 +179,15 @@ export class Renderer {
   redraw(): void {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
-    for (const stroke of this.doc.getStrokes()) {
-      this.ctx.globalCompositeOperation =
-        stroke.mode === "erase" ? "destination-out" : "source-over";
+    for (const item of this.doc.getItems()) {
+      switch (item.type) {
+        case "stroke":
+          this.renderStroke(item.data);
+          break;
 
-      this.ctx.strokeStyle = stroke.color;
-      this.ctx.fillStyle = stroke.color;
-
-      if (stroke.points.length === 1) {
-        const point = stroke.points[0];
-
-        this.ctx.beginPath();
-        this.ctx.arc(point.x, point.y, point.size / 2, 0, Math.PI * 2);
-        this.ctx.fill();
-
-        continue;
-      }
-
-      for (let i = 1; i < stroke.points.length; i++) {
-        const a = stroke.points[i - 1];
-        const b = stroke.points[i];
-
-        this.ctx.lineWidth = b.size;
-        this.ctx.lineCap = "round";
-        this.ctx.lineJoin = "round";
-
-        this.ctx.beginPath();
-        this.ctx.moveTo(a.x, a.y);
-        this.ctx.lineTo(b.x, b.y);
-        this.ctx.stroke();
+        case "fill":
+          this.renderFill(item.data);
+          break;
       }
     }
 
@@ -250,6 +230,11 @@ export class Renderer {
     this.redraw();
   }
 
+  fill(x: number, y: number, color: string, tolerance: number): void {
+    this.doc.addFill(x, y, color, tolerance);
+    this.redraw();
+  }
+
   /**
    * Draws a segment between two points.
    *
@@ -266,6 +251,200 @@ export class Renderer {
     this.ctx.moveTo(a.x, a.y);
     this.ctx.lineTo(b.x, b.y);
     this.ctx.stroke();
+  }
+
+  private renderStroke(stroke: DocStroke): void {
+    this.ctx.save();
+
+    this.ctx.globalCompositeOperation = stroke.compositeOperation;
+
+    this.ctx.globalAlpha = stroke.opacity;
+    this.ctx.strokeStyle = stroke.color;
+    this.ctx.fillStyle = stroke.color;
+    this.ctx.lineCap = "round";
+    this.ctx.lineJoin = "round";
+
+    if (stroke.points.length === 1) {
+      const point = stroke.points[0];
+
+      this.ctx.beginPath();
+      this.ctx.arc(point.x, point.y, point.size / 2, 0, Math.PI * 2);
+      this.ctx.fill();
+
+      this.ctx.restore();
+      return;
+    }
+
+    for (let i = 1; i < stroke.points.length; i++) {
+      const a = stroke.points[i - 1];
+      const b = stroke.points[i];
+
+      this.ctx.lineWidth = b.size;
+
+      this.ctx.beginPath();
+      this.ctx.moveTo(a.x, a.y);
+      this.ctx.lineTo(b.x, b.y);
+      this.ctx.stroke();
+    }
+
+    this.ctx.restore();
+  }
+
+  private renderFill(fill: DocFill): void {
+    const image = this.ctx.getImageData(
+      0,
+      0,
+      this.ctx.canvas.width,
+      this.ctx.canvas.height,
+    );
+
+    const color = this.parseColor(fill.color);
+
+    if (!color) return;
+
+    this.floodFill(
+      image,
+      Math.floor(fill.x),
+      Math.floor(fill.y),
+      color,
+      fill.tolerance,
+    );
+
+    this.ctx.putImageData(image, 0, 0);
+  }
+
+  private floodFill(
+    image: ImageData,
+    startX: number,
+    startY: number,
+    fill: [number, number, number, number],
+    tolerance: number,
+  ): void {
+    const { width, height, data } = image;
+
+    if (startX < 0 || startY < 0 || startX >= width || startY >= height) {
+      return;
+    }
+
+    const startIndex = (startY * width + startX) * 4;
+
+    const target: [number, number, number, number] = [
+      data[startIndex],
+      data[startIndex + 1],
+      data[startIndex + 2],
+      data[startIndex + 3],
+    ];
+
+    if (this.colorsMatch(target, fill, tolerance)) {
+      return;
+    }
+
+    const matches = (x: number, y: number): boolean => {
+      const index = (y * width + x) * 4;
+
+      const dr = data[index] - target[0];
+      const dg = data[index + 1] - target[1];
+      const db = data[index + 2] - target[2];
+      const da = data[index + 3] - target[3];
+
+      return (
+        dr * dr +
+        dg * dg +
+        db * db +
+        da * da <=
+        tolerance * tolerance
+      );
+    };
+
+    const queue: Array<[number, number]> = [[startX, startY]];
+
+    while (queue.length > 0) {
+      const [x, y] = queue.pop()!;
+
+      if (!matches(x, y)) {
+        continue;
+      }
+
+      let left = x;
+
+      while (left >= 0 && matches(left, y)) {
+        left--;
+      }
+
+      left++;
+
+      let spanAbove = false;
+      let spanBelow = false;
+
+      for (
+        let currentX = left;
+        currentX < width && matches(currentX, y);
+        currentX++
+      ) {
+        const index = (y * width + currentX) * 4;
+
+        data[index] = fill[0];
+        data[index + 1] = fill[1];
+        data[index + 2] = fill[2];
+        data[index + 3] = fill[3];
+
+        if (y > 0) {
+          const aboveMatches = matches(currentX, y - 1);
+
+          if (aboveMatches && !spanAbove) {
+            queue.push([currentX, y - 1]);
+
+            spanAbove = true;
+          } else if (!aboveMatches) {
+            spanAbove = false;
+          }
+        }
+
+        if (y < height - 1) {
+          const belowMatches = matches(currentX, y + 1);
+
+          if (belowMatches && !spanBelow) {
+            queue.push([currentX, y + 1]);
+
+            spanBelow = true;
+          } else if (!belowMatches) {
+            spanBelow = false;
+          }
+        }
+      }
+    }
+  }
+
+  private colorsMatch(
+    a: [number, number, number, number],
+    b: [number, number, number, number],
+    tolerance: number,
+  ): boolean {
+    const distance = Math.sqrt(
+      Math.pow(a[0] - b[0], 2) +
+        Math.pow(a[1] - b[1], 2) +
+        Math.pow(a[2] - b[2], 2) +
+        Math.pow(a[3] - b[3], 2),
+    );
+
+    return distance <= tolerance;
+  }
+
+  private parseColor(color: string): [number, number, number, number] | null {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) return null;
+
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, 1, 1);
+
+    const data = ctx.getImageData(0, 0, 1, 1).data;
+
+    return [data[0], data[1], data[2], data[3]];
   }
 
   /**

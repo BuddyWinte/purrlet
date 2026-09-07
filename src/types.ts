@@ -56,9 +56,28 @@ export type DocPoint = {
 export type DocStroke = {
   id: string;
   color: string;
+  opacity: number;
+  compositeOperation: GlobalCompositeOperation;
   points: DocPoint[];
-  mode: RendererMode
 };
+
+export type DocFill = {
+  id: string;
+  x: number;
+  y: number;
+  color: string;
+  tolerance: number;
+};
+
+export type DocumentItem =
+  | {
+      type: "stroke";
+      data: DocStroke;
+    }
+  | {
+      type: "fill";
+      data: DocFill;
+    };
 
 export interface HistoryCommand {
   execute(doc: Document): void;

@@ -29,6 +29,7 @@ import {
   exportCanvas,
   type ExportOptions,
 } from "./export";
+import { fillTool } from "../tools/fill";
 
 export class Purrlet {
   private config: PurrletConfig;
@@ -55,6 +56,7 @@ export class Purrlet {
     this.registerTool(brushTool);
     this.registerTool(eraserTool);
     this.registerTool(lineTool);
+    this.registerTool(fillTool);
 
     if (config.defaultTool) {
       this.setTool(config.defaultTool);

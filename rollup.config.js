@@ -9,7 +9,7 @@ const banner = `/*!
  * Created by BuddyWinte and pawsome contributors
  * https://github.com/BuddyWinte/Purrlet
  *
- * License: PolyForm Noncommercial License 1.0.0
+ * SPDX-License-Identifier: Apache-2.0
  */`;
 
 export default [
