@@ -1,87 +1,70 @@
-/**
- * Purrlet v2.0.0
- *
- * Please read the CONTRIBUTING.md file for our standards on code style and contribution. (such as JSDoc, TypeScript, etc. everywhere)
- * @author BuddyWinte
- * @since v0.9.0
- * @version v2.0.0
- */
 "use strict";
 
-import { Document } from "./document";
-import type { DocStroke } from "../types";
+import type { Document } from "./document";
 
-type Command = {
-  do: (doc: Document) => void;
-  undo: (doc: Document) => void;
-};
+export interface HistoryCommand {
+  readonly execute: (document: Document) => void;
+  readonly undo: (document: Document) => void;
+}
 
 export class History {
-  private undoStack: Command[] = [];
-  private redoStack: Command[] = [];
+  private readonly undoStack: HistoryCommand[] = [];
+  private readonly redoStack: HistoryCommand[] = [];
 
-  pushStroke(stroke: DocStroke) {
-    const command: Command = {
-      do: (doc) => {
-        doc._addStroke?.(stroke);
-      },
-      undo: (doc) => {
-        doc._removeStrokeById?.(stroke.id);
-      }
-    };
+  execute(
+    document: Document,
+    command: HistoryCommand,
+  ): void {
+    command.execute(document);
 
     this.undoStack.push(command);
     this.redoStack.length = 0;
   }
 
-  pushClear(previous: DocStroke[]) {
-    const snapshot = [...previous];
+  undo(document: Document): boolean {
+    const command = this.undoStack.pop();
 
-    const command: Command = {
-      do: (doc) => {
-        doc._clear?.();
-      },
-      undo: (doc) => {
-        for (const s of snapshot) {
-          doc._addStroke?.(s);
-        }
-      }
-    };
+    if (command === undefined) {
+      return false;
+    }
 
+    command.undo(document);
+    this.redoStack.push(command);
+
+    return true;
+  }
+
+  redo(document: Document): boolean {
+    const command = this.redoStack.pop();
+
+    if (command === undefined) {
+      return false;
+    }
+
+    command.execute(document);
     this.undoStack.push(command);
-    this.redoStack.length = 0;
-  }
-
-  undo(doc: Document) {
-    const cmd = this.undoStack.pop();
-    if (!cmd) return false;
-
-    cmd.undo(doc);
-    this.redoStack.push(cmd);
 
     return true;
   }
 
-  redo(doc: Document) {
-    const cmd = this.redoStack.pop();
-    if (!cmd) return false;
-
-    cmd.do(doc);
-    this.undoStack.push(cmd);
-
-    return true;
-  }
-
-  clear() {
+  clear(): void {
     this.undoStack.length = 0;
     this.redoStack.length = 0;
   }
 
-  canUndo() {
+  canUndo(): boolean {
     return this.undoStack.length > 0;
   }
 
-  canRedo() {
+  canRedo(): boolean {
     return this.redoStack.length > 0;
+  }
+
+  get undoCount(): number {
+    return this.undoStack.length;
+  }
+
+  get redoCount(): number {
+    return this.redoStack.length;
   }
 }

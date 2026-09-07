@@ -1,186 +1,593 @@
-/**
- * Purrlet v2.0.0
- *
- * Please read the CONTRIBUTING.md file for our standards on code style and contribution. (such as JSDoc, TypeScript, etc. everywhere)
- * @author BuddyWinte
- * @since v0.9.0
- * @version v2.0.0
- */
 "use strict";
 
-import type { RendererMode } from "../types";
+import type {
+  DocFill,
+  DocPoint,
+  DocRectangle,
+  DocStroke,
+  DocumentItem,
+  RendererMode,
+} from "../types";
 import { Document } from "./document";
 import { History } from "./history";
 
-/**
- * Represents a point in a stroke
- * @internal
- */
-type Point = { x: number; y: number; size: number };
+type PreviewRenderer = (context: CanvasRenderingContext2D) => void;
 
-/**
- * The Renderer class is responsible for rendering the canvas based on the current document state.
- *
- * @public
- */
+const modeToCompositeOperation = (
+  mode: RendererMode,
+): GlobalCompositeOperation =>
+  mode === "erase" ? "destination-out" : "source-over";
+
+const clamp = (value: number, min: number, max: number): number =>
+  Math.min(max, Math.max(min, value));
+
+const normalizeNumber = (value: number, fallback: number): number =>
+  Number.isFinite(value) ? value : fallback;
+
+const normalizeSize = (size: number): number =>
+  Math.max(0, normalizeNumber(size, 0));
+
+const normalizeTolerance = (tolerance: number): number =>
+  clamp(normalizeNumber(tolerance, 0), 0, 510);
+
+const createPoint = (x: number, y: number, size: number): DocPoint => ({
+  x,
+  y,
+  size: normalizeSize(size),
+});
+
+const createId = (): string => crypto.randomUUID();
+
 export class Renderer {
   private mode: RendererMode = "draw";
+  private previewRenderer: PreviewRenderer | null = null;
+  private activeStroke: DocStroke | null = null;
 
-  /**
-   * Creates a new Renderer instance
-   *
-   * @param ctx - The canvas rendering context.
-   * @param doc - The document to render.
-   * @param history - The history of strokes.
-   */
   constructor(
-    private ctx: CanvasRenderingContext2D,
-    private doc: Document,
-    private history: History
+    private readonly ctx: CanvasRenderingContext2D,
+    private readonly doc: Document,
+    private readonly history: History,
   ) {}
 
-  /**
-   * Sets the rendering mode to either "draw" or "erase".
-   *
-   * @param mode - The rendering mode to set.
-   */
   setMode(mode: RendererMode): void {
     this.mode = mode;
-    this.ctx.globalCompositeOperation =
-      mode === "erase" ? "destination-out" : "source-over";
+    this.ctx.globalCompositeOperation = modeToCompositeOperation(mode);
   }
 
-  /**
-   * Resizes the canvas to match the css size
-   */
   resize(): void {
-    const rect = this.ctx.canvas.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
+    const canvas = this.ctx.canvas;
+    const rect = canvas.getBoundingClientRect();
 
-    this.ctx.canvas.width = rect.width * dpr;
-    this.ctx.canvas.height = rect.height * dpr;
+    const width = Math.max(1, Math.round(rect.width));
+
+    const height = Math.max(1, Math.round(rect.height));
+
+    const dpr =
+      typeof window === "undefined"
+        ? 1
+        : Math.max(1, normalizeNumber(window.devicePixelRatio, 1));
+
+    const pixelWidth = Math.max(1, Math.round(width * dpr));
+
+    const pixelHeight = Math.max(1, Math.round(height * dpr));
+
+    if (canvas.width === pixelWidth && canvas.height === pixelHeight) {
+      this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      return;
+    }
+
+    canvas.width = pixelWidth;
+    canvas.height = pixelHeight;
+
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
     this.redraw();
   }
 
-  /**
-   * Begins a new stroke with the given color, size, and starting point.
-   *
-   * @param color - The color of the stroke.
-   * @param size - The size of the stroke.
-   * @param x - The starting x-coordinate of the stroke.
-   * @param y - The starting y-coordinate of the stroke.
-   */
   beginStroke(color: string, size: number, x: number, y: number): void {
-    const stroke = this.doc.beginStroke(color, x, y, size);
+    this.endStroke();
 
-    this.history.pushStroke(stroke);
+    const point = createPoint(x, y, size);
 
-    this.ctx.strokeStyle = color;
-    this.ctx.fillStyle = color;
+    this.activeStroke = {
+      id: createId(),
+      color,
+      opacity: 1,
+      compositeOperation: modeToCompositeOperation(this.mode),
+      points: [point],
+    };
 
-    this.drawDot(x, y, size);
+    this.ctx.save();
+
+    this.ctx.globalCompositeOperation = this.activeStroke.compositeOperation;
+
+    this.ctx.globalAlpha = this.activeStroke.opacity;
+
+    this.ctx.strokeStyle = this.activeStroke.color;
+
+    this.ctx.fillStyle = this.activeStroke.color;
+
+    this.drawDot(x, y, point.size);
+
+    this.ctx.restore();
+
+    this.restoreMode();
   }
 
-  /**
-   * Adds a point to the current stroke at the given coordinates and size.
-   *
-   * @param x - The x-coordinate of the point.
-   * @param y - The y-coordinate of the point.
-   * @param size - The size of the point.
-   */
-  addPoint(x: number, y: number, size: number): void {
-    const stroke = this.doc.getCurrent();
-    if (!stroke) return;
+  addPoint(x: number, y: number, size: number): boolean {
+    const stroke = this.activeStroke;
 
-    const pts = stroke.points;
-    const prev = pts[pts.length - 1];
+    if (stroke === null) {
+      return false;
+    }
 
-    const p = { x, y, size };
-    pts.push(p);
+    const previous = stroke.points[stroke.points.length - 1];
 
-    this.drawSegment(prev, p);
+    if (previous === undefined) {
+      return false;
+    }
+
+    const point = createPoint(x, y, size);
+
+    this.activeStroke = {
+      ...stroke,
+      points: [...stroke.points, point],
+    };
+
+    this.ctx.save();
+
+    this.ctx.globalCompositeOperation = stroke.compositeOperation;
+
+    this.ctx.globalAlpha = stroke.opacity;
+
+    this.ctx.strokeStyle = stroke.color;
+
+    this.ctx.fillStyle = stroke.color;
+
+    this.drawSegment(previous, point);
+
+    this.ctx.restore();
+
+    this.restoreMode();
+
+    return true;
   }
 
-  /**
-   * Ends the current stroke.
-   */
-  endStroke(): void {
-    this.doc.endStroke();
+  endStroke(): boolean {
+    const stroke = this.activeStroke;
+
+    if (stroke === null) {
+      return false;
+    }
+
+    this.activeStroke = null;
+
+    const item: DocumentItem = {
+      type: "stroke",
+      data: stroke,
+    };
+
+    this.history.execute(this.doc, {
+      execute: (document) => {
+        document.add(item);
+      },
+
+      undo: (document) => {
+        document.remove(stroke.id);
+      },
+    });
+
+    this.redraw();
+
+    return true;
   }
 
-  /**
-   * Clears the canvas and document.
-   */
   clear(): void {
-    this.history.clear();
-    this.doc.clear();
+    this.activeStroke = null;
+    this.previewRenderer = null;
 
-    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-  }
+    const previous = this.doc.getItems();
 
-  /**
-   * Undoes the last stroke.
-   */
-  undo(): void {
-    this.history.undo(this.doc);
+    if (previous.length === 0) {
+      this.history.clear();
+      this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+      return;
+    }
+
+    const snapshot = [...previous];
+
+    this.history.execute(this.doc, {
+      execute: (document) => {
+        document.clear();
+      },
+      undo: (document) => {
+        for (const item of snapshot) {
+          document.add(item);
+        }
+      },
+    });
+
     this.redraw();
   }
 
-  /**
-   * Redoes the last stroke.
-   */
-  redo(): void {
-    this.history.redo(this.doc);
+  undo(): boolean {
+    this.activeStroke = null;
+
+    const changed = this.history.undo(this.doc);
+
+    if (!changed) {
+      return false;
+    }
+
     this.redraw();
+
+    return true;
   }
 
-  /**
-   * Clears the history of strokes.
-   */
+  redo(): boolean {
+    this.activeStroke = null;
+
+    const changed = this.history.redo(this.doc);
+
+    if (!changed) {
+      return false;
+    }
+
+    this.redraw();
+
+    return true;
+  }
+
   clearHistory(): void {
     this.history.clear();
   }
 
-  /**
-   * Redraws the canvas based on the current document state.
-   */
   redraw(): void {
-    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-    this.ctx.globalCompositeOperation = "source-over";
+    const canvas = this.ctx.canvas;
 
-    for (const stroke of this.doc.getStrokes()) {
-      this.ctx.strokeStyle = stroke.color;
+    this.ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      for (let i = 1; i < stroke.points.length; i++) {
-        const a = stroke.points[i - 1];
-        const b = stroke.points[i];
-
-        this.ctx.lineWidth = b.size;
-        this.ctx.lineCap = "round";
-        this.ctx.lineJoin = "round";
-
-        this.ctx.beginPath();
-        this.ctx.moveTo(a.x, a.y);
-        this.ctx.lineTo(b.x, b.y);
-        this.ctx.stroke();
-      }
+    for (const item of this.doc.getItems()) {
+      this.renderItem(item);
     }
 
-    this.ctx.globalCompositeOperation =
-      this.mode === "erase" ? "destination-out" : "source-over";
+    if (this.activeStroke !== null) {
+      this.renderStroke(this.activeStroke);
+    }
+
+    const preview = this.previewRenderer;
+
+    if (preview !== null) {
+      this.ctx.save();
+      this.ctx.globalCompositeOperation = "source-over";
+      this.ctx.globalAlpha = 1;
+      preview(this.ctx);
+      this.ctx.restore();
+    }
+
+    this.restoreMode();
   }
 
-  /**
-   * Draws a segment between two points.
-   *
-   * @param a - The starting point of the segment.
-   * @param b - The ending point of the segment.
-   * @private
-   */
-  private drawSegment(a: Point, b: Point): void {
+  preview(renderer: PreviewRenderer): void {
+    this.previewRenderer = renderer;
+    this.redraw();
+  }
+
+  clearPreview(): void {
+    if (this.previewRenderer === null) {
+      return;
+    }
+
+    this.previewRenderer = null;
+    this.redraw();
+  }
+
+  fill(x: number, y: number, color: string, tolerance: number): boolean {
+    const fill: DocFill = {
+      id: createId(),
+      x,
+      y,
+      color,
+      tolerance: normalizeTolerance(tolerance),
+    };
+
+    this.history.execute(this.doc, {
+      execute: (document) => {
+        document.add({
+          type: "fill",
+          data: fill,
+        });
+      },
+      undo: (document) => {
+        document.remove(fill.id);
+      },
+    });
+
+    this.redraw();
+
+    return true;
+  }
+
+  previewLine(
+    color: string,
+    size: number,
+    startX: number,
+    startY: number,
+    endX: number,
+    endY: number,
+  ): void {
+    this.preview((ctx) => {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = normalizeSize(size);
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(endX, endY);
+      ctx.stroke();
+    });
+  }
+
+  private renderItem(item: DocumentItem): void {
+    switch (item.type) {
+      case "stroke":
+        this.renderStroke(item.data);
+        return;
+
+      case "fill":
+        this.renderFill(item.data);
+        return;
+
+      case "rectangle":
+        this.renderRectangle(item.data);
+        return;
+    }
+  }
+
+  private renderStroke(stroke: DocStroke): void {
+    if (stroke.points.length === 0) {
+      return;
+    }
+
+    this.ctx.save();
+
+    this.ctx.globalCompositeOperation = stroke.compositeOperation;
+
+    this.ctx.globalAlpha = clamp(normalizeNumber(stroke.opacity, 1), 0, 1);
+
+    this.ctx.strokeStyle = stroke.color;
+
+    this.ctx.fillStyle = stroke.color;
+
+    this.ctx.lineCap = "round";
+    this.ctx.lineJoin = "round";
+
+    if (stroke.points.length === 1) {
+      const point = stroke.points[0];
+
+      if (point !== undefined) {
+        this.drawDot(point.x, point.y, point.size);
+      }
+
+      this.ctx.restore();
+      return;
+    }
+
+    for (let index = 1; index < stroke.points.length; index++) {
+      const previous = stroke.points[index - 1];
+
+      const current = stroke.points[index];
+
+      if (previous === undefined || current === undefined) {
+        continue;
+      }
+
+      this.drawSegment(previous, current);
+    }
+
+    this.ctx.restore();
+  }
+
+  private renderFill(fill: DocFill): void {
+    const canvas = this.ctx.canvas;
+
+    const x = Math.floor(fill.x);
+    const y = Math.floor(fill.y);
+
+    if (x < 0 || y < 0 || x >= canvas.width || y >= canvas.height) {
+      return;
+    }
+
+    const color = this.parseColor(fill.color);
+
+    if (color === null) {
+      return;
+    }
+
+    const image = this.ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    this.floodFill(image, x, y, color, normalizeTolerance(fill.tolerance));
+
+    this.ctx.putImageData(image, 0, 0);
+  }
+
+  private renderRectangle(rectangle: DocRectangle): void {
+    this.ctx.save();
+
+    this.ctx.globalCompositeOperation = rectangle.compositeOperation;
+
+    this.ctx.globalAlpha = clamp(normalizeNumber(rectangle.opacity, 1), 0, 1);
+
+    this.ctx.fillStyle = rectangle.color;
+
+    this.ctx.fillRect(
+      rectangle.x,
+      rectangle.y,
+      rectangle.width,
+      rectangle.height,
+    );
+
+    this.ctx.restore();
+  }
+
+  cancelStroke(): void {
+    if (this.activeStroke === null) {
+      return;
+    }
+
+    this.activeStroke = null;
+    this.redraw();
+  }
+
+  private floodFill(
+    image: ImageData,
+    startX: number,
+    startY: number,
+    fill: [number, number, number, number],
+    tolerance: number,
+  ): void {
+    const { width, height, data } = image;
+
+    const startIndex = (startY * width + startX) * 4;
+
+    const target: [number, number, number, number] = [
+      data[startIndex] ?? 0,
+      data[startIndex + 1] ?? 0,
+      data[startIndex + 2] ?? 0,
+      data[startIndex + 3] ?? 0,
+    ];
+
+    if (this.colorsMatch(target, fill, tolerance)) {
+      return;
+    }
+
+    const matches = (x: number, y: number): boolean => {
+      const index = (y * width + x) * 4;
+
+      const dr = (data[index] ?? 0) - target[0];
+
+      const dg = (data[index + 1] ?? 0) - target[1];
+
+      const db = (data[index + 2] ?? 0) - target[2];
+
+      const da = (data[index + 3] ?? 0) - target[3];
+
+      return dr * dr + dg * dg + db * db + da * da <= tolerance * tolerance;
+    };
+
+    const queue: Array<readonly [number, number]> = [[startX, startY]];
+
+    while (queue.length > 0) {
+      const point = queue.pop();
+
+      if (point === undefined) {
+        continue;
+      }
+
+      const [x, y] = point;
+
+      if (!matches(x, y)) {
+        continue;
+      }
+
+      let left = x;
+
+      while (left >= 0 && matches(left, y)) {
+        left--;
+      }
+
+      left++;
+
+      let spanAbove = false;
+      let spanBelow = false;
+
+      for (
+        let currentX = left;
+        currentX < width && matches(currentX, y);
+        currentX++
+      ) {
+        const index = (y * width + currentX) * 4;
+
+        data[index] = fill[0];
+        data[index + 1] = fill[1];
+        data[index + 2] = fill[2];
+        data[index + 3] = fill[3];
+
+        if (y > 0) {
+          const above = matches(currentX, y - 1);
+
+          if (above && !spanAbove) {
+            queue.push([currentX, y - 1]);
+            spanAbove = true;
+          } else if (!above) {
+            spanAbove = false;
+          }
+        }
+
+        if (y < height - 1) {
+          const below = matches(currentX, y + 1);
+
+          if (below && !spanBelow) {
+            queue.push([currentX, y + 1]);
+            spanBelow = true;
+          } else if (!below) {
+            spanBelow = false;
+          }
+        }
+      }
+    }
+  }
+
+  private colorsMatch(
+    a: readonly [number, number, number, number],
+    b: readonly [number, number, number, number],
+    tolerance: number,
+  ): boolean {
+    const dr = a[0] - b[0];
+
+    const dg = a[1] - b[1];
+
+    const db = a[2] - b[2];
+
+    const da = a[3] - b[3];
+
+    return dr * dr + dg * dg + db * db + da * da <= tolerance * tolerance;
+  }
+
+  private parseColor(color: string): [number, number, number, number] | null {
+    if (typeof document === "undefined") {
+      return null;
+    }
+
+    const canvas = document.createElement("canvas");
+
+    canvas.width = 1;
+    canvas.height = 1;
+
+    const context = canvas.getContext("2d");
+
+    if (context === null) {
+      return null;
+    }
+
+    context.fillStyle = color;
+
+    if (context.fillStyle === "") {
+      return null;
+    }
+
+    context.fillRect(0, 0, 1, 1);
+
+    const data = context.getImageData(0, 0, 1, 1).data;
+
+    return [data[0] ?? 0, data[1] ?? 0, data[2] ?? 0, data[3] ?? 0];
+  }
+
+  private drawSegment(a: DocPoint, b: DocPoint): void {
     this.ctx.lineWidth = b.size;
+
     this.ctx.lineCap = "round";
     this.ctx.lineJoin = "round";
 
@@ -190,17 +597,21 @@ export class Renderer {
     this.ctx.stroke();
   }
 
-  /**
-   * Draws a dot at the given coordinates and size.
-   *
-   * @param x - The x-coordinate of the dot.
-   * @param y - The y-coordinate of the dot.
-   * @param size - The size of the dot.
-   * @private
-   */
   private drawDot(x: number, y: number, size: number): void {
+    const radius = size / 2;
+
+    if (radius <= 0) {
+      return;
+    }
+
     this.ctx.beginPath();
-    this.ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+    this.ctx.arc(x, y, radius, 0, Math.PI * 2);
     this.ctx.fill();
+  }
+
+  private restoreMode(): void {
+    this.ctx.globalCompositeOperation = modeToCompositeOperation(this.mode);
+
+    this.ctx.globalAlpha = 1;
   }
 }

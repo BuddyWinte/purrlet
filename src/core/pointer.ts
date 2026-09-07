@@ -1,48 +1,215 @@
-/**
- * Purrlet v2.0.0
- *
- * Please read the CONTRIBUTING.md file for our standards on code style and contribution. (such as JSDoc, TypeScript, etc. everywhere)
- * @author BuddyWinte
- * @since v0.9.0
- * @version v2.0.0
- */
 "use strict";
 
-import { PurrletPointer } from "../types";
+import type { PurrletPointer, PointerType } from "../types";
+
+export interface PointerHandlers {
+  readonly down: (
+    pointer: PurrletPointer,
+    event: PointerEvent,
+  ) => void;
+
+  readonly move: (
+    pointer: PurrletPointer,
+    event: PointerEvent,
+  ) => void;
+
+  readonly up: (
+    pointer: PurrletPointer,
+    event: PointerEvent,
+  ) => void;
+
+  readonly cancel?: (
+    pointer: PurrletPointer,
+    event: PointerEvent,
+  ) => void;
+}
+
+const pointerTypes  : readonly PointerType[] = [
+  "mouse",
+  "pen",
+  "touch",
+];
+
+const isPointerType = (
+  value: string,
+): value is PointerType =>
+  pointerTypes.includes(value as PointerType);
+
+const normalizePressure = (
+  pressure: number,
+): number => {
+  if (!Number.isFinite(pressure)) {
+    return 0;
+  }
+
+  return Math.min(1, Math.max(0, pressure));
+};
+
+const normalizeTilt = (
+  tilt: number,
+): number => {
+  if (!Number.isFinite(tilt)) {
+    return 0;
+  }
+
+  return Math.max(-90, Math.min(90, tilt));
+};
 
 export function bindPointer(
-    canvas: HTMLCanvasElement,
-    handlers: {
-        down: (p: PurrletPointer, e: PointerEvent) => void;
-        move: (p: PurrletPointer, e: PointerEvent) => void;
-        up: (p: PurrletPointer, e: PointerEvent) => void;
-    }
-) {
-    const getPoint = (e: PointerEvent): PurrletPointer => {
-        const rect = canvas.getBoundingClientRect();
-        return {
-            x: (e.clientX - rect.left),
-            y: (e.clientY - rect.top),
-            pressure: e.pressure ?? 0,
-            tiltX: e.tiltX ?? 0,
-            tiltY: e.tiltY ?? 0,
-            pointerType: e.pointerType as any,
-            pointerId: e.pointerId,
-            isDown: e.buttons > 0,
-        };
+  canvas: HTMLCanvasElement,
+  handlers: PointerHandlers,
+): () => void {
+  const getPoint = (
+    event: PointerEvent,
+  ): PurrletPointer => {
+    const rect = canvas.getBoundingClientRect();
+
+    const scaleX =
+      rect.width > 0
+        ? canvas.clientWidth / rect.width
+        : 1;
+
+    const scaleY =
+      rect.height > 0
+        ? canvas.clientHeight / rect.height
+        : 1;
+
+    const pointerType = isPointerType(event.pointerType)
+      ? event.pointerType
+      : "mouse";
+
+    return {
+      x: (event.clientX - rect.left) * scaleX,
+      y: (event.clientY - rect.top) * scaleY,
+      pressure: normalizePressure(event.pressure),
+      tiltX: normalizeTilt(event.tiltX),
+      tiltY: normalizeTilt(event.tiltY),
+      pointerType,
+      pointerId: event.pointerId,
+      isDown: event.buttons !== 0,
     };
+  };
 
-    canvas.addEventListener("pointerdown", (e) => {
-        canvas.setPointerCapture(e.pointerId);
-        handlers.down(getPoint(e), e);
-    });
+  const handlePointerDown = (
+    event: PointerEvent,
+  ): void => {
+    if (event.isPrimary === false) {
+      return;
+    }
 
-    canvas.addEventListener("pointermove", (e) => {
-        handlers.move(getPoint(e), e);
-    });
+    try {
+      canvas.setPointerCapture(event.pointerId);
+    } catch {
+      // pointe capture is not guaranteed to be available.
+    }
 
-    canvas.addEventListener("pointerup", (e) => {
-        handlers.up(getPoint(e), e);
-        canvas.releasePointerCapture(e.pointerId);
-    });
+    handlers.down(
+      getPoint(event),
+      event,
+    );
+  };
+
+  const handlePointerMove = (
+    event: PointerEvent,
+  ): void => {
+    handlers.move(
+      getPoint(event),
+      event,
+    );
+  };
+
+  const handlePointerUp = (
+    event: PointerEvent,
+  ): void => {
+    handlers.up(
+      getPoint(event),
+      event,
+    );
+
+    if (
+      canvas.hasPointerCapture(event.pointerId)
+    ) {
+      canvas.releasePointerCapture(
+        event.pointerId,
+      );
+    }
+  };
+
+  const handlePointerCancel = (
+    event: PointerEvent,
+  ): void => {
+    handlers.cancel?.(
+      getPoint(event),
+      event,
+    );
+
+    if (
+      canvas.hasPointerCapture(event.pointerId)
+    ) {
+      canvas.releasePointerCapture(
+        event.pointerId,
+      );
+    }
+  };
+
+  const handleLostPointerCapture = (
+    event: PointerEvent,
+  ): void => {
+    handlers.cancel?.(
+      getPoint(event),
+      event,
+    );
+  };
+
+  canvas.addEventListener(
+    "pointerdown",
+    handlePointerDown,
+  );
+
+  canvas.addEventListener(
+    "pointermove",
+    handlePointerMove,
+  );
+
+  canvas.addEventListener(
+    "pointerup",
+    handlePointerUp,
+  );
+
+  canvas.addEventListener(
+    "pointercancel",
+    handlePointerCancel,
+  );
+
+  canvas.addEventListener(
+    "lostpointercapture",
+    handleLostPointerCapture,
+  );
+
+  return (): void => {
+    canvas.removeEventListener(
+      "pointerdown",
+      handlePointerDown,
+    );
+
+    canvas.removeEventListener(
+      "pointermove",
+      handlePointerMove,
+    );
+
+    canvas.removeEventListener(
+      "pointerup",
+      handlePointerUp,
+    );
+
+    canvas.removeEventListener(
+      "pointercancel",
+      handlePointerCancel,
+    );
+
+    canvas.removeEventListener(
+      "lostpointercapture",
+      handleLostPointerCapture,
+    );
+  };
 }

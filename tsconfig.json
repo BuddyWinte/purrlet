@@ -7,9 +7,14 @@
     "declarationDir": "./dist/types",
     "outDir": "./dist",
     "rootDir": "./src",
+    "allowJs": false, // we shouldn't allow any JS files
+    "types": ["bun"],
     "strict": true,
     "skipLibCheck": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
   },
-  "include": ["src"]
+  "include": ["src"],
 }
