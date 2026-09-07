@@ -1,18 +1,76 @@
-/**
- * Purrlet
- * A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
- *
- * Please read the CONTRIBUTING.md file before you contrbute.
- */
-
-// TODO: add jsdoc
 "use strict";
 
-import type { DocFill, DocStroke, DocumentItem, RendererMode } from "../types";
+import type {
+  DocPoint,
+  DocStroke,
+  DocumentItem,
+  RendererMode,
+} from "../types";
+
+const modeToCompositeOperation = (
+  mode: RendererMode,
+): GlobalCompositeOperation =>
+  mode === "erase" ? "destination-out" : "source-over";
+
+const createId = (): string => crypto.randomUUID();
+
+const createPoint = (
+  x: number,
+  y: number,
+  size: number,
+): DocPoint => ({
+  x,
+  y,
+  size,
+});
 
 export class Document {
   private items: DocumentItem[] = [];
-  private current: DocStroke | null = null;
+  private currentStrokeId: string | null = null;
+
+  add(item: DocumentItem): void {
+    this.items.push(item);
+  }
+
+  remove(id: string): boolean {
+    const index = this.items.findIndex(
+      (item) => item.data.id === id,
+    );
+
+    if (index < 0) {
+      return false;
+    }
+
+    this.items.splice(index, 1);
+
+    if (this.currentStrokeId === id) {
+      this.currentStrokeId = null;
+    }
+
+    return true;
+  }
+
+  get(id: string): DocumentItem | undefined {
+    return this.items.find(
+      (item) => item.data.id === id,
+    );
+  }
+
+  getItems(): readonly DocumentItem[] {
+    return this.items;
+  }
+
+  getCurrentStroke(): DocStroke | undefined {
+    if (this.currentStrokeId === null) {
+      return undefined;
+    }
+
+    const item = this.get(this.currentStrokeId);
+
+    return item?.type === "stroke"
+      ? item.data
+      : undefined;
+  }
 
   beginStroke(
     color: string,
@@ -20,121 +78,112 @@ export class Document {
     y: number,
     size: number,
     mode: RendererMode,
-  ) {
+  ): DocStroke {
+    this.endStroke();
+
     const stroke: DocStroke = {
-      id: crypto.randomUUID(),
+      id: createId(),
       color,
       opacity: 1,
-      compositeOperation: mode === "erase" ? "destination-out" : "source-over",
-      points: [{ x, y, size }],
+      compositeOperation: modeToCompositeOperation(mode),
+      points: [
+        createPoint(x, y, size),
+      ],
     };
 
-    this.current = stroke;
-
-    this.items.push({
+    this.add({
       type: "stroke",
       data: stroke,
     });
+
+    this.currentStrokeId = stroke.id;
 
     return stroke;
   }
 
-  addPoint(x: number, y: number, size: number) {
-    if (!this.current) return;
+  addPoint(
+    x: number,
+    y: number,
+    size: number,
+  ): boolean {
+    const currentStroke = this.getCurrentStroke();
 
-    this.current.points.push({
-      x,
-      y,
-      size,
-    });
-  }
+    if (!currentStroke) {
+      return false;
+    }
 
-  endStroke() {
-    this.current = null;
-  }
+    const itemIndex = this.items.findIndex(
+      (item) =>
+        item.type === "stroke" &&
+        item.data.id === currentStroke.id,
+    );
 
-  addFill(x: number, y: number, color: string, tolerance: number): DocFill {
-    const fill: DocFill = {
-      id: crypto.randomUUID(),
-      x,
-      y,
-      color,
-      tolerance,
+    if (itemIndex < 0) {
+      this.currentStrokeId = null;
+      return false;
+    }
+
+    const point = createPoint(x, y, size);
+
+    const updatedStroke: DocStroke = {
+      ...currentStroke,
+      points: [
+        ...currentStroke.points,
+        point,
+      ],
     };
 
-    this.items.push({
-      type: "fill",
-      data: fill,
-    });
+    this.items[itemIndex] = {
+      type: "stroke",
+      data: updatedStroke,
+    };
 
-    return fill;
+    return true;
   }
 
-  getItems(): DocumentItem[] {
-    return this.items;
+  endStroke(): void {
+    this.currentStrokeId = null;
   }
 
-  getStrokes(): DocStroke[] {
+  clear(): void {
+    this.items = [];
+    this.currentStrokeId = null;
+  }
+
+  getStrokes(): readonly DocStroke[] {
     return this.items
       .filter(
         (
           item,
-        ): item is {
-          type: "stroke";
-          data: DocStroke;
-        } => item.type === "stroke",
+        ): item is Extract<
+          DocumentItem,
+          { readonly type: "stroke" }
+        > => item.type === "stroke",
       )
       .map((item) => item.data);
   }
 
-  getCurrent() {
-    return this.current;
+  get size(): number {
+    return this.items.length;
   }
 
-  clear() {
-    this.items = [];
-    this.current = null;
+  get isEmpty(): boolean {
+    return this.items.length === 0;
   }
 
-  removeLastStroke() {
-    for (let i = this.items.length - 1; i >= 0; i--) {
-      if (this.items[i].type === "stroke") {
-        this.items.splice(i, 1);
-        break;
-      }
-    }
+  get isDrawing(): boolean {
+    return this.currentStrokeId !== null;
   }
 
-  _addStroke(stroke: DocStroke) {
-    this.items.push({
-      type: "stroke",
-      data: stroke,
-    });
+  _addItem(item: DocumentItem): void {
+    this.add(item);
   }
 
-  _addFill(fill: DocFill) {
-    this.items.push({
-      type: "fill",
-      data: fill,
-    });
+  _removeItemById(id: string): boolean {
+    return this.remove(id);
   }
 
-  _removeItemById(id: string) {
-    this.items = this.items.filter((item) => {
-      return item.data.id !== id;
-    });
-
-    if (this.current?.id === id) {
-      this.current = null;
-    }
-  }
-
-  _removeStrokeById(id: string) {
-    this._removeItemById(id);
-  }
-
-  _clear() {
-    this.items = [];
-    this.current = null;
+  _clear(): void {
+    this.clear();
   }
 }

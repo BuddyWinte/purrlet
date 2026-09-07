@@ -1,7 +1,7 @@
 {
   "name": "purrlet",
   "version": "2.1.0",
-  "description": "A lightweight headless canvas drawing engine for building interactive drawing tools and websites. meow",
+  "description": "A lightweight headless canvas drawing engine for building pawesome drawing boxes.",
   "type": "module",
   "main": "./dist/purrlet.mjs",
   "types": "./dist/index.d.ts",
@@ -58,6 +58,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-terser": "^1.0.0",
     "@rollup/plugin-typescript": "^12.3.0",

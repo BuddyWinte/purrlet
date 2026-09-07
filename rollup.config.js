@@ -2,12 +2,18 @@ import typescript from "@rollup/plugin-typescript";
 import dts from "rollup-plugin-dts";
 import terser from "@rollup/plugin-terser";
 import pkg from "./package.json" with { type: "json" };
+import json from "@rollup/plugin-json";
 
 const banner = `/*!
- * Purrlet v${pkg.version}
+ * ${pkg.name.charAt(0).toUpperCase() + pkg.name.slice(1)} v${pkg.version}
+ * ${pkg.description}
  *
- * Created by BuddyWinte and pawsome contributors
- * https://github.com/BuddyWinte/Purrlet
+ * Maintained by BuddyWinte and pawsome contributors
+ * https://github.com/BuddyWinte/purrlet
+ *
+ * Copyright (c) 2026 BuddyWinte
+ * You may obtain a copy of the licens at
+ * > http://www.apache.org/licenses/LICENSE-2.0
  *
  * SPDX-License-Identifier: Apache-2.0
  */`;
@@ -29,6 +35,7 @@ export default [
     },
 
     plugins: [
+      json(),
       typescript({
         tsconfig: "./tsconfig.json",
       }),

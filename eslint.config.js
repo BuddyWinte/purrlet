@@ -22,7 +22,7 @@ export default tseslint.config(
       sourceType: "module",
     },
     rules: {
-      "no-console": "warn",
+      "no-console": "off",
       "no-debugger": "error",
       "@typescript-eslint/no-unused-vars": [
         "error",
@@ -32,7 +32,7 @@ export default tseslint.config(
           caughtErrorsIgnorePattern: "^_",
         },
       ],
-      "@typescript-eslint/no-explicit-any": "off", // TODO: make this warn?
+      "@typescript-eslint/no-explicit-any": "warn",
     },
   },
 );

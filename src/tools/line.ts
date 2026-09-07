@@ -1,24 +1,23 @@
-/**
- * Purrlet
- * A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
- *
- * Please read the CONTRIBUTING.md file before you contrbute.
- */
 "use strict";
 
-import type { Tool, ToolInstance, PurrletPointer } from "../types";
+import type {
+  PurrletPointer,
+  Tool,
+  ToolInstance,
+} from "../types";
 import type { Renderer } from "../core/renderer";
 
-
-type LineConfig = {
-  color?: string;
-  size?: number;
-};
+export interface LineConfig {
+  readonly color?: string;
+  readonly size?: number;
+}
 
 export const lineTool: Tool<LineConfig> = {
   name: "line",
 
-  create(config: LineConfig = {}): ToolInstance {
+  create(
+    config: Readonly<LineConfig> = {},
+  ): ToolInstance<LineConfig> {
     let drawing = false;
     let startX = 0;
     let startY = 0;
@@ -27,41 +26,83 @@ export const lineTool: Tool<LineConfig> = {
     const size = config.size ?? 5;
 
     return {
-      onPointerDown(p: PurrletPointer, r: Renderer) {
-        drawing = true;
-        startX = p.x;
-        startY = p.y;
+      config,
 
-        r.clearPreview();
+      onPointerDown(
+        pointer: PurrletPointer,
+        renderer: Renderer,
+      ): void {
+        drawing = true;
+        startX = pointer.x;
+        startY = pointer.y;
+
+        renderer.clearPreview();
       },
 
-      onPointerMove(p: PurrletPointer, r: Renderer) {
-        if (!drawing || !p.isDown) return;
+      onPointerMove(
+        pointer: PurrletPointer,
+        renderer: Renderer,
+      ): void {
+        if (!drawing || !pointer.isDown) {
+          return;
+        }
 
-        r.previewLine(
+        renderer.previewLine(
           color,
           size,
           startX,
           startY,
-          p.x,
-          p.y,
+          pointer.x,
+          pointer.y,
         );
       },
 
-      onPointerUp(p: PurrletPointer, r: Renderer) {
-        if (!drawing) return;
+      onPointerUp(
+        pointer: PurrletPointer,
+        renderer: Renderer,
+      ): void {
+        if (!drawing) {
+          return;
+        }
 
         drawing = false;
-        r.clearPreview();
+        renderer.clearPreview();
 
-        r.beginStroke(color, size, startX, startY);
-        r.addPoint(p.x, p.y, size);
-        r.endStroke();
+        renderer.beginStroke(
+          color,
+          size,
+          startX,
+          startY,
+        );
+
+        renderer.addPoint(
+          pointer.x,
+          pointer.y,
+          size,
+        );
+
+        renderer.endStroke();
       },
 
-      onDeactivate(r: Renderer) {
+      onPointerCancel(
+        _pointer: PurrletPointer,
+        renderer: Renderer,
+      ): void {
+        if (!drawing) {
+          return;
+        }
+
         drawing = false;
-        r.clearPreview();
+        renderer.clearPreview();
+        renderer.cancelStroke();
+      },
+
+      onDeactivate(
+        renderer: Renderer,
+      ): void {
+        drawing = false;
+        renderer.clearPreview();
+        renderer.cancelStroke();
       },
     };
   },
