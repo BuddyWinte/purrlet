@@ -24,6 +24,9 @@
 </p>
 </p>
 
+> [!WARNING]
+> Purrlet is now built minified and unminifed. If you are using CDN you may want to use the minified version.
+
 ---
 
 <h2 align="center">What is Purrlet?</h2>

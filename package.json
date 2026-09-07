@@ -1,6 +1,7 @@
 {
     "name": "purrlet",
     "version": "2.1.0",
+    "private": false,
     "description": "A lightweight, dependency-free, headless canvas drawing engine for the web.",
     "keywords": [
         "drawbox",
@@ -25,18 +26,18 @@
     ],
     "type": "module",
     "sideEffects": false,
-    "main": "./dist/purrlet.cjs",
+    "main": "./dist/purrlet.min.cjs",
     "types": "./dist/index.d.ts",
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
-            "import": "./dist/purrlet.mjs",
-            "require": "./dist/purrlet.cjs"
+            "import": "./dist/purrlet.min.mjs",
+            "require": "./dist/purrlet.min.cjs"
         },
         "./providers": {
             "types": "./dist/providers.d.ts",
-            "import": "./dist/providers.mjs",
-            "require": "./dist/providers.cjs"
+            "import": "./dist/providers.min.mjs",
+            "require": "./dist/providers.min.cjs"
         }
     },
     "publishConfig": {
