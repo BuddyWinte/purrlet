@@ -600,9 +600,7 @@ A simple tool can implement only the callbacks it needs.
 
 Purrlet can be extended with optional providers for uploading exported drawings to external services.
 
-Providers are *not part of Purrlet's core functionality*.
-
-
+Providers are _not part of Purrlet's core functionality_.
 
 If you would like to contribute a provider, please open a pull request.
 
@@ -614,7 +612,7 @@ For example:
 
 ```js
 import { Purrlet } from "purrlet";
-import { Catbox } from "purrlet/providers"; // 
+import { Catbox } from "purrlet/providers"; //
 
 const canvas = document.querySelector("canvas");
 
