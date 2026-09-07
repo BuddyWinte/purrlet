@@ -1,8 +1,6 @@
  /**
-  * Purrlet
-  * A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
+  * ImgBB Provider
   *
-  * Please read the CONTRIBUTING.md file before you contrbute.
   * @see https://api.imgbb.com/
   */
 

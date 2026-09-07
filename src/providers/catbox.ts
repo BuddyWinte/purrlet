@@ -1,11 +1,8 @@
 /**
- * Purrlet
- * A modern, easy-to-use, lightweight, headless canvas drawing engine for the web.
+ * Catbox Provider
  *
- * Please read the CONTRIBUTING.md file before you contrbute.
  * @see https://catbox.moe/tools.php
  */
-
 import { UploadResult } from "./types";
 
 export interface CatboxOptions {
