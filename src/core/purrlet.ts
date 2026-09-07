@@ -68,11 +68,7 @@ export class Purrlet {
       return;
     }
 
-    this.renderer = new Renderer(
-      ctx,
-      new Document(),
-      new History(),
-    );
+    this.renderer = new Renderer(ctx, new Document(), new History());
 
     this.active = true;
 
@@ -81,15 +77,10 @@ export class Purrlet {
     this.bindPointerEvents();
     this.observeResize();
 
-    this.setTool(
-      config.defaultTool ?? "brush",
-    );
+    this.setTool(config.defaultTool ?? "brush");
 
     if (typeof window !== "undefined") {
-      window.addEventListener(
-        "resize",
-        this.resize,
-      );
+      window.addEventListener("resize", this.resize);
     }
   }
 
@@ -109,9 +100,7 @@ export class Purrlet {
       try {
         element = document.querySelector(target);
       } catch {
-        console.warn(
-          `[Purrlet] Invalid canvas selector: "${target}".`,
-        );
+        console.warn(`[Purrlet] Invalid canvas selector: "${target}".`);
 
         return null;
       }
@@ -152,9 +141,7 @@ export class Purrlet {
     const context = canvas.getContext("2d");
 
     if (context === null) {
-      console.warn(
-        "[Purrlet] 2D rendering context is not available.",
-      );
+      console.warn("[Purrlet] 2D rendering context is not available.");
     }
 
     return context;
@@ -170,15 +157,18 @@ export class Purrlet {
   private observeResize(): void {
     const canvas = this.canvas;
 
-    if (
-      canvas === null ||
-      typeof ResizeObserver === "undefined"
-    ) {
+    if (canvas === null || typeof ResizeObserver === "undefined") {
       return;
     }
 
-    this.resizeObserver = new ResizeObserver(() => {
-      this.resize();
+    this.resizeObserver = new ResizeObserver((entries) => {
+      const entry = entries[0];
+
+      if (entry === undefined) {
+        return;
+      }
+
+      this.renderer?.resize(entry.contentRect.width, entry.contentRect.height);
     });
 
     this.resizeObserver.observe(canvas);
@@ -188,47 +178,29 @@ export class Purrlet {
     const canvas = this.canvas;
     const renderer = this.renderer;
 
-    if (
-      canvas === null ||
-      renderer === null
-    ) {
+    if (canvas === null || renderer === null) {
       return;
     }
 
     const handlers: PointerHandlers = {
       down: (pointer: PurrletPointer) => {
-        this.currentTool?.onPointerDown?.(
-          pointer,
-          renderer,
-        );
+        this.currentTool?.onPointerDown?.(pointer, renderer);
       },
 
       move: (pointer: PurrletPointer) => {
-        this.currentTool?.onPointerMove?.(
-          pointer,
-          renderer,
-        );
+        this.currentTool?.onPointerMove?.(pointer, renderer);
       },
 
       up: (pointer: PurrletPointer) => {
-        this.currentTool?.onPointerUp?.(
-          pointer,
-          renderer,
-        );
+        this.currentTool?.onPointerUp?.(pointer, renderer);
       },
 
       cancel: (pointer: PurrletPointer) => {
-        this.currentTool?.onPointerCancel?.(
-          pointer,
-          renderer,
-        );
+        this.currentTool?.onPointerCancel?.(pointer, renderer);
       },
     };
 
-    this.unbindPointer = bindPointer(
-      canvas,
-      handlers,
-    );
+    this.unbindPointer = bindPointer(canvas, handlers);
   }
 
   readonly resize = (): void => {
@@ -255,18 +227,14 @@ export class Purrlet {
     this.renderer?.redo();
   }
 
-  registerTool(
-    tool: Tool,
-  ): void {
+  registerTool(tool: Tool): void {
     if (
       !tool ||
       typeof tool.name !== "string" ||
       tool.name.length === 0 ||
       typeof tool.create !== "function"
     ) {
-      console.warn(
-        "[Purrlet] Cannot register an invalid tool.",
-      );
+      console.warn("[Purrlet] Cannot register an invalid tool.");
 
       return;
     }
@@ -274,9 +242,7 @@ export class Purrlet {
     this.tools[tool.name] = tool;
   }
 
-  unregisterTool(
-    name: string,
-  ): void {
+  unregisterTool(name: string): void {
     const tool = this.tools[name];
 
     if (tool === undefined) {
@@ -291,9 +257,7 @@ export class Purrlet {
       const renderer = this.renderer;
 
       if (renderer !== null) {
-        this.currentTool?.onDeactivate?.(
-          renderer,
-        );
+        this.currentTool?.onDeactivate?.(renderer);
       }
 
       this.currentTool = null;
@@ -304,10 +268,7 @@ export class Purrlet {
     delete this.toolConfigs[name];
   }
 
-  setTool(
-    name: string,
-    config: PurrletToolConfig = {},
-  ): void {
+  setTool(name: string, config: PurrletToolConfig = {}): void {
     if (!this.active) {
       return;
     }
@@ -321,9 +282,7 @@ export class Purrlet {
     const tool = this.tools[name];
 
     if (tool === undefined) {
-      console.warn(
-        `[Purrlet] Tool "${name}" is not registered.`,
-      );
+      console.warn(`[Purrlet] Tool "${name}" is not registered.`);
 
       return;
     }
@@ -333,31 +292,21 @@ export class Purrlet {
     try {
       instance = tool.create(config);
     } catch (error: unknown) {
-      console.warn(
-        `[Purrlet] Failed to create tool "${name}".`,
-        error,
-      );
+      console.warn(`[Purrlet] Failed to create tool "${name}".`, error);
 
       return;
     }
 
-    this.currentTool?.onDeactivate?.(
-      renderer,
-    );
+    this.currentTool?.onDeactivate?.(renderer);
 
     this.currentTool = instance;
     this.currentToolName = name;
     this.toolConfigs[name] = config;
 
-    this.currentTool.onActivate?.(
-      renderer,
-    );
+    this.currentTool.onActivate?.(renderer);
   }
 
-  updateToolConfig(
-    name: string,
-    patch: PurrletToolConfig,
-  ): void {
+  updateToolConfig(name: string, patch: PurrletToolConfig): void {
     if (!this.active) {
       return;
     }
@@ -372,8 +321,7 @@ export class Purrlet {
       return;
     }
 
-    const previousConfig =
-      this.toolConfigs[name] ?? {};
+    const previousConfig = this.toolConfigs[name] ?? {};
 
     const nextConfig: PurrletToolConfig = {
       ...previousConfig,
@@ -396,35 +344,24 @@ export class Purrlet {
     try {
       instance = tool.create(nextConfig);
     } catch (error: unknown) {
-      console.warn(
-        `[Purrlet] Failed to update tool "${name}".`,
-        error,
-      );
+      console.warn(`[Purrlet] Failed to update tool "${name}".`, error);
 
       return;
     }
 
-    this.currentTool?.onDeactivate?.(
-      renderer,
-    );
+    this.currentTool?.onDeactivate?.(renderer);
 
     this.toolConfigs[name] = nextConfig;
     this.currentTool = instance;
 
-    this.currentTool.onActivate?.(
-      renderer,
-    );
+    this.currentTool.onActivate?.(renderer);
   }
 
-  getToolConfig(
-    name: string,
-  ): PurrletToolConfig | null {
+  getToolConfig(name: string): PurrletToolConfig | null {
     return this.toolConfigs[name] ?? null;
   }
 
-  getToolById(
-    name: string,
-  ): RegisteredTool | null {
+  getToolById(name: string): RegisteredTool | null {
     return this.tools[name] ?? null;
   }
 
@@ -468,56 +405,28 @@ export class Purrlet {
     this.renderer?.clearHistory();
   }
 
-  async toBlob(
-    type = "image/png",
-    quality?: number,
-  ): Promise<Blob | null> {
-    if (
-      !this.active ||
-      this.canvas === null
-    ) {
+  async toBlob(type = "image/png", quality?: number): Promise<Blob | null> {
+    if (!this.active || this.canvas === null) {
       return null;
     }
 
-    return canvasToBlob(
-      this.canvas,
-      type,
-      quality,
-    );
+    return canvasToBlob(this.canvas, type, quality);
   }
 
-  toDataURL(
-    type = "image/png",
-    quality?: number,
-  ): string | null {
-    if (
-      !this.active ||
-      this.canvas === null
-    ) {
+  toDataURL(type = "image/png", quality?: number): string | null {
+    if (!this.active || this.canvas === null) {
       return null;
     }
 
-    return canvasToDataURL(
-      this.canvas,
-      type,
-      quality,
-    );
+    return canvasToDataURL(this.canvas, type, quality);
   }
 
-  async export(
-    options: Readonly<ExportOptions>,
-  ): Promise<void> {
-    if (
-      !this.active ||
-      this.canvas === null
-    ) {
+  async export(options: Readonly<ExportOptions>): Promise<void> {
+    if (!this.active || this.canvas === null) {
       return;
     }
 
-    await exportCanvas(
-      this.canvas,
-      options,
-    );
+    await exportCanvas(this.canvas, options);
   }
 
   destroy(): void {
@@ -528,9 +437,7 @@ export class Purrlet {
     const renderer = this.renderer;
 
     if (renderer !== null) {
-      this.currentTool?.onDeactivate?.(
-        renderer,
-      );
+      this.currentTool?.onDeactivate?.(renderer);
     }
 
     this.currentTool = null;
@@ -543,10 +450,7 @@ export class Purrlet {
     this.resizeObserver = null;
 
     if (typeof window !== "undefined") {
-      window.removeEventListener(
-        "resize",
-        this.resize,
-      );
+      window.removeEventListener("resize", this.resize);
     }
 
     this.active = false;

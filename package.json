@@ -33,7 +33,8 @@
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
     "check": "bun run lint && bun run typecheck && bun run build && bun run test",
-    "prepublishOnly": "bun run check"
+    "prepublishOnly": "bun run check",
+    "test:serve": "bunx serve . && echo 'You may need to update and build to see updated changes'"
   },
   "keywords": [
     "drawbox",
