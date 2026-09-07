@@ -600,11 +600,9 @@ A simple tool can implement only the callbacks it needs.
 
 Purrlet can be extended with optional providers for uploading exported drawings to external services.
 
-Providers are --not part of Purrlet's core functionality--.
+Providers are *not part of Purrlet's core functionality*.
 
-They are separate integrations intended to make uploading a canvas easier.
 
-> Providers are maintained separately from the Purrlet core. Purrlet does not own or operate these services and is not responsible for their availability, policies, limits, or content.
 
 If you would like to contribute a provider, please open a pull request.
 
@@ -616,7 +614,7 @@ For example:
 
 ```js
 import { Purrlet } from "purrlet";
-import { Catbox } from "purrlet/providers";
+import { Catbox } from "purrlet/providers"; // 
 
 const canvas = document.querySelector("canvas");
 
@@ -955,62 +953,6 @@ interface ToolInstance<TConfig = unknown> {
     onDeactivate?(renderer: Renderer): void;
 }
 ```
-
----
-
-# Framework Support
-
-Purrlet does not depend on a UI framework.
-
-It can be used with:
-
-- Plain JavaScript
-- TypeScript
-- React
-- Vue
-- Svelte
-- Solid
-- Angular
-- Other browser frameworks
-
-Purrlet only manages the drawing engine.
-
-Your application is responsible for the UI surrounding it.
-
-This means you can build your own:
-
-- Toolbars
-- Color pickers
-- Brush controls
-- Undo/redo buttons
-- Layer panels
-- Export menus
-- Mobile controls
-- Settings panels
-
-without Purrlet imposing a particular design.
-
----
-
-# Headless Design
-
-Purrlet intentionally does not provide a drawing interface.
-
-There is no built-in:
-
-- Toolbar
-- Color picker
-- Menu
-- Modal
-- Settings panel
-- Layer UI
-- Export dialog
-
-Instead, Purrlet provides the underlying drawing functionality.
-
-This makes it possible to integrate Purrlet into applications with completely different designs without fighting against an included UI.
-
----
 
 # Browser Considerations
 
