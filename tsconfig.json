@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "declaration": true,
+    "declarationDir": "./dist/types",
+    "importHelpers": false,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "allowJs": false, // we shouldn't allow any JS files
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+  },
+  "include": ["src"],
+}
