@@ -1,40 +1,100 @@
-# Purrlet
-**A lightweight, dependency-free, headless canvas drawing engine for the web.**
-
-Purrlet provides the difficult parts of building a drawing application, such as pointer input, rendering, tools, pressure sensitivity, undo/redo, and exporting, while leaving the UI completely up to you.
-
-Build your own drawing experience with plain HTML, React, Vue, Svelte, Solid, or any other framework.
-
-## Key Features
-
-- Pawesomely lightweight and dependency-free
-- TypeScript-first
-- Basically plug-and-play
-- Desktop, mobile, and drawing tablet support
-- Framework agnostic
-- Headless (you do all the UI!)
-- Pointer and touch input
-- Pressure sensitivity
-- Tool-based architecture
-- Undo/redo support
-- Canvas exporting
-- Custom tool support
-- High-DPI display support
-- Automatic canvas resizing
-- Optional upload providers
-
+<h1 align="center">Purrlet</h1>
 <p align="center">
-/\_/\\<br>
-( o.o )<br>
-> ^ <
+  <strong>A lightweight, dependency-free canvas drawing engine for the web.</strong>
+  <br>
+  <sub>The drawing engine without the drawing app.</sub>
 </p>
 
-Did purrlet help you in any way? Buy me a coffee to help me keep this project alive!
-> https://ko-fi.com/BuddyWinte
+<p align="center">
+  <a href="https://github.com/BuddyWinte/purrlet/releases">
+    <img src="https://img.shields.io/github/v/release/buddywinte/purrlet" alt="GitHub Release">
+  </a>
+  <a href="https://www.npmjs.com/package/purrlet">
+    <img src="https://img.shields.io/npm/v/purrlet" alt="NPM Version">
+  </a>
+  <a href="https://www.npmjs.com/package/purrlet">
+    <img src="https://img.shields.io/npm/dm/purrlet" alt="NPM Downloads">
+  </a>
+  <a href="https://github.com/BuddyWinte/purrlet">
+    <img src="https://img.shields.io/github/stars/BuddyWinte/purrlet" alt="GitHub Stars">
+  </a>
+  <a href="https://discord.gg/Ruk58PhJvm">
+    <img src="https://img.shields.io/discord/1375986160995930132?style=plastic&logo=discord&label=Discord" alt="Discord">
+  </a>
+</p>
+</p>
+
+----
+
+<h2 align="center">What is Purrlet?</h2>
+
+<p>Purrlet is the <b>engine behind a drawing app.</b></p>
+
+It handles the annyoing stuff:
+- Pointer & touch input
+- Drawing and rendering
+- Pressure sensitivity
+- Tools
+- Undo / redo
+- High-DPI canvases
+- Exporting
+- Canvas resizing
+- Upload providers
+
+You handle everything else.
+
+Works with plain HTML, React, Vue, Svelte, Solid, or basically anything that can talk to a `<canvas>` element.
 
 ---
 
-## Installation
+<h2 align="center">Features</h2>
+
+<table>
+  <tr>
+    <td width="50%">
+      <strong>Lightweight</strong><br>
+      Dependency-free and built to stay small.
+    </td>
+    <td width="50%">
+      <strong>Headless</strong><br>
+      You build the UI. Purrlet handles the engine.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <strong>TypeScript-first</strong><br>
+      Fully typed with bundled declarations.
+    </td>
+    <td>
+      <strong>Framework-agnostic</strong><br>
+      React, Vue, Svelte, Solid, vanilla JS and more.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <strong>Pressure sensitive</strong><br>
+      Designed with stylus and tablet input in mind.
+    </td>
+    <td>
+      <strong>Extensible</strong><br>
+      Create and register your own tools.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <strong>High-DPI</strong><br>
+      Crisp drawings on modern displays.
+    </td>
+    <td>
+      <strong>Export ready</strong><br>
+      Blob, Data URL, downloads and providers.
+    </td>
+  </tr>
+</table>
+
+---
+
+<h2 align="center">Installation</h2>
 
 ### npm
 
@@ -998,9 +1058,21 @@ if (typeof window !== "undefined") {
 
 # TODO / Roadmap
 - [ ] Layers
+  - [ ] Add DocLayer + layer storage
+  - [ ] Add active layer
+  - [ ] Add/remove/rename layers
+  - [ ] Reorder layers
+  - [ ] Visibility, opacity & locking
+  - [ ] Move existing items into layers
+  - [ ] Update renderer for layers
+  - [ ] Update tools to use active layer
+  - [ ] Add undo/redo support
+  - [ ] Add serialization/export support
+  - [ ] Add tests
+  - [ ] Update README/API docs
 - [ ] Improved (drawing) Tablet support
 - [ ] More built-in tools
-- [ ] Better engine (more optimized and easier to add more tools)
+- [ ] Improve engine architecture & performance
 - [ ] More providers
 
 ---
