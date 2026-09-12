@@ -1,6 +1,6 @@
 {
     "name": "purrlet",
-    "version": "2.1.1",
+    "version": "2.2.0",
     "private": false,
     "description": "A lightweight, dependency-free, headless canvas drawing engine for the web.",
     "keywords": [
