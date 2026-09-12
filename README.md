@@ -1,104 +1,39 @@
-<h1 align="center">Purrlet</h1>
-<p align="center">
-  <strong>A lightweight, dependency-free canvas drawing engine for the web.</strong>
-  <br>
-  <sub>The drawing engine without the drawing app.</sub>
-</p>
+# Purrlet
+**A lightweight, dependency-free, headless canvas drawing engine for the web.**
 
-<p align="center">
-  <a href="https://github.com/BuddyWinte/purrlet/releases">
-    <img src="https://img.shields.io/github/v/release/buddywinte/purrlet" alt="GitHub Release">
-  </a>
-  <a href="https://www.npmjs.com/package/purrlet">
-    <img src="https://img.shields.io/npm/v/purrlet" alt="NPM Version">
-  </a>
-  <a href="https://www.npmjs.com/package/purrlet">
-    <img src="https://img.shields.io/npm/dm/purrlet" alt="NPM Downloads">
-  </a>
-  <a href="https://github.com/BuddyWinte/purrlet">
-    <img src="https://img.shields.io/github/stars/BuddyWinte/purrlet" alt="GitHub Stars">
-  </a>
-  <a href="https://discord.gg/Ruk58PhJvm">
-    <img src="https://img.shields.io/discord/1375986160995930132?style=plastic&logo=discord&label=Discord" alt="Discord">
-  </a>
-</p>
-</p>
+Purrlet provides the difficult parts of building a drawing application, such as pointer input, rendering, tools, pressure sensitivity, undo/redo, and exporting, while leaving the UI completely up to you.
 
 > [!WARNING]
 > Purrlet is now built minified and unminifed. If you are using CDN you may want to use the minified version.
 
 ---
 
-<h2 align="center">What is Purrlet?</h2>
+## Features
 
-<p>Purrlet is the <b>engine behind a drawing app.</b></p>
+- Pawesomely lightweight and dependency-free
+- TypeScript-first
+- Basically plug-and-play
+- Desktop, mobile, and drawing tablet support
+- Framework agnostic
+- Headless (you do all the UI!)
+- Pointer and touch input
+- Tool-based architecture
+- Undo/redo support
+- Canvas exporting
+- Custom tool support
+- High-DPI display support
+- Automatic canvas resizing
+- Optional upload providers
 
-It handles the annyoing stuff:
-
-- Pointer & touch input
-- Drawing and rendering
-- Pressure sensitivity
-- Tools
-- Undo / redo
-- High-DPI canvases
-- Exporting
-- Canvas resizing
-- Upload providers
-
-You handle everything else.
-
-Works with plain HTML, React, Vue, Svelte, Solid, or basically anything that can talk to a `<canvas>` element.
-
----
-
-<h2 align="center">Features</h2>
-
-<table align="center">
-  <tr>
-    <td width="50%">
-      <strong>Lightweight</strong><br>
-      Dependency-free and built to stay small.
-    </td>
-    <td width="50%">
-      <strong>Headless</strong><br>
-      You build the UI. Purrlet handles the engine.
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <strong>TypeScript-first</strong><br>
-      Fully typed with bundled declarations.
-    </td>
-    <td>
-      <strong>Framework-agnostic</strong><br>
-      React, Vue, Svelte, Solid, vanilla JS and more.
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <strong>Pressure sensitive</strong><br>
-      Designed with stylus and tablet input in mind.
-    </td>
-    <td>
-      <strong>Extensible</strong><br>
-      Create and register your own tools.
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <strong>High-DPI</strong><br>
-      Crisp drawings on modern displays.
-    </td>
-    <td>
-      <strong>Export ready</strong><br>
-      Blob, Data URL, downloads and providers.
-    </td>
-  </tr>
-</table>
+<p align="center">
+/\_/\\<br>
+( o.o )<br>
+> ^ <
+</p>
 
 ---
 
-<h2 align="center">Installation</h2>
+## Installation
 
 ### npm
 
