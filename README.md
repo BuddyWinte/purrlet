@@ -29,7 +29,7 @@
 
 ---
 
-<h2 align="center">What is Purrlet?</h2>
+## What is Purrlet?
 
 <p>Purrlet is the <b>engine behind a drawing app.</b></p>
 
@@ -51,7 +51,7 @@ Works with plain HTML, React, Vue, Svelte, Solid, or basically anything that can
 
 ---
 
-<h2 align="center">Features</h2>
+## Features
 
 <table align="center">
   <tr>
@@ -98,7 +98,7 @@ Works with plain HTML, React, Vue, Svelte, Solid, or basically anything that can
 
 ---
 
-<h2 align="center">Installation</h2>
+## Installation
 
 ### npm
 
