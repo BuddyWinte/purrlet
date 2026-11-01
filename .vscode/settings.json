@@ -15,5 +15,6 @@
     },
     "[css]": {
         "editor.defaultFormatter": "oxc.oxfmt"
-    }
+    },
+    "liveServer.settings.port": 5501
 }

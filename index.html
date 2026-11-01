@@ -20,6 +20,7 @@
             <button data-tool="eraser">Eraser</button>
             <button data-tool="line">Line</button>
             <button data-tool="fill">Fill</button>
+            <button data-tool="eyedropper">Eyedropper</button>
         </p>
         <p>
             Color:
@@ -68,6 +69,15 @@
                     return {
                         color: color.value,
                         tolerance: 32,
+                    };
+                }
+                
+                if (currentTool === "eyedropper") {
+                    return {
+                        color: color.value,
+                        pickedColor: (hex) => {
+                            color.value = hex;
+                        }
                     };
                 }
 

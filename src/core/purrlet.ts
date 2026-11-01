@@ -16,6 +16,7 @@ import { brushTool } from "../tools/brush";
 import { eraserTool } from "../tools/eraser";
 import { lineTool } from "../tools/line";
 import { fillTool } from "../tools/fill";
+import { eyedropperTool } from "../tools/eyedropper";
 
 import { bindPointer, type PointerHandlers } from "./pointer";
 import { Renderer } from "./renderer";
@@ -152,6 +153,7 @@ export class Purrlet {
         this.registerTool(eraserTool);
         this.registerTool(lineTool);
         this.registerTool(fillTool);
+        this.registerTool(eyedropperTool);
     }
 
     private observeResize(): void {
