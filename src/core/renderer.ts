@@ -316,11 +316,10 @@ export class Renderer {
         this.redraw();
     }
 
-    getColor(x: number, y: number): [number, number, number, number] | null {
-        const ctx = this.ctx;
+    getRGBColor(x: number, y: number): [number, number, number] | null {
+        const data = this.ctx.getImageData(x, y, 1, 1).data;
 
-        const data = ctx.getImageData(x, y, 1, 1).data;
-        return [data[0] ?? 0, data[1] ?? 0, data[2] ?? 0, data[3] ?? 0];
+        return [data[0] ?? 0, data[1] ?? 0, data[2] ?? 0];
     }
 
     fill(x: number, y: number, color: string, tolerance: number): boolean {
